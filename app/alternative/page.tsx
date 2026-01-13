@@ -313,36 +313,10 @@ export default function AlternativePage() {
             {MAP_HOTSPOTS.map((point) => (
               <button
                 key={point.id}
+                className="absolute w-6 h-6 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center group/pin z-10 hover:z-[60] cursor-none"
+                style={{ left: point.x, top: point.y }}
+                aria-label={point.title}
                 onMouseEnter={() => setIsHoveringMarker(true)}
-                onMouseMove={(e) => {
-                  const btn = e.currentTarget;
-                  const rect = btn.getBoundingClientRect();
-                  const x = e.clientX - (rect.left + rect.width / 2);
-                  const y = e.clientY - (rect.top + rect.height / 2);
-                  
-                  // Move outer circle
-                  const circle = btn.querySelector('.outer-circle');
-                  if (circle) {
-                    gsap.to(circle, {
-                      x: x * 0.35,
-                      y: y * 0.35,
-                      duration: 0.2,
-                      ease: "power2.out"
-                    });
-                  }
-
-                  // Move tooltip card (follow pointer)
-                  const tooltip = btn.querySelector('.map-tooltip');
-                  if (tooltip) {
-                    gsap.to(tooltip, {
-                      x: x * 1.5,
-                      y: y * 1.5,
-                      xPercent: -50,
-                      duration: 0.2,
-                      ease: "power2.out"
-                    });
-                  }
-                }}
                 onMouseLeave={(e) => {
                   setIsHoveringMarker(false);
                   
@@ -358,24 +332,51 @@ export default function AlternativePage() {
                     gsap.to(tooltip, { x: 0, y: 0, xPercent: -50, duration: 0.3, ease: "power2.out" });
                   }
                 }}
-                className="absolute w-6 h-6 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center group/pin z-10 hover:z-[60]"
-                style={{ left: point.x, top: point.y }}
-                aria-label={point.title}
               >
                 {/* Core Circle */}
-                <div className="w-2 h-2 bg-white rounded-full transition-all duration-500 hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] z-20"></div>
+                <div className="w-2 h-2 bg-white rounded-full transition-all duration-500 hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] z-20 pointer-events-none"></div>
 
-                {/* 3x Size Outer Circle (Magnetic & Beating) */}
+                {/* 3x Size Outer Circle (Magnetic & Beating) - Interactive */}
                 <span 
-                  className="outer-circle absolute w-[20px] h-[20px] bg-white/30 rounded-full animate-pulse transition-opacity duration-300 group-hover/pin:animate-none group-hover/pin:bg-transparent group-hover/pin:border group-hover/pin:border-white z-10"
+                  className="outer-circle absolute w-[20px] h-[20px] bg-white/30 rounded-full animate-pulse transition-opacity duration-300 group-hover/pin:animate-none group-hover/pin:bg-transparent group-hover/pin:border group-hover/pin:border-white z-10 cursor-none"
                   style={{ animationDuration: '4s' }}
+                  onMouseMove={(e) => {
+                    const btn = e.currentTarget.closest('button');
+                    if (!btn) return;
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - (rect.left + rect.width / 2);
+                    const y = e.clientY - (rect.top + rect.height / 2);
+                    
+                    // Move outer circle
+                    const circle = btn.querySelector('.outer-circle');
+                    if (circle) {
+                      gsap.to(circle, {
+                        x: x * 0.20,
+                        y: y * 0.20,
+                        duration: 0.2,
+                        ease: "power2.out"
+                      });
+                    }
+
+                    // Move tooltip card (follow pointer)
+                    const tooltip = btn.querySelector('.map-tooltip');
+                    if (tooltip) {
+                      gsap.to(tooltip, {
+                        x: x * 0.5,
+                        y: y * 0.5,
+                        xPercent: -50,
+                        duration: 0.1,
+                        ease: "power2.out"
+                      });
+                    }
+                  }}
                 ></span>
                 
                 {/* Core Circle Glow (Ping) */}
                 <span className="absolute inset-x-0 inset-y-0 rounded-full bg-white animate-ping opacity-20 group-hover/pin:opacity-0"></span>
                 
                 {/* Tooltip */}
-                <div className="map-tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-6 p-3 bg-white/[0.85] backdrop-blur-md text-[#30373C] rounded-md shadow-2xl opacity-0 invisible group-hover/pin:opacity-100 group-hover/pin:visible transition-all duration-300 pointer-events-none z-[50] w-[250px] text-left border border-white/20">
+                <div className="map-tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-6 p-3 bg-white/[0.85] backdrop-blur-md text-[#30373C] rounded-md shadow-2xl opacity-0 invisible group-hover/pin:opacity-100 group-hover/pin:visible transition-opacity duration-300 pointer-events-none z-[50] w-[250px] text-left border border-white/20">
                   {point.image && (
                     <div className="mb-2.5 relative w-full aspect-video overflow-hidden rounded-sm bg-black/5">
                       <Image 
