@@ -29,6 +29,9 @@ importers:
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
+      fix-react2shell-next:
+        specifier: ^1.1.4
+        version: 1.1.4
       gsap:
         specifier: ^3.14.2
         version: 3.14.2
@@ -990,6 +993,11 @@ packages:
   find-up@5.0.0:
     resolution: {integrity: sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng==}
     engines: {node: '>=10'}
+
+  fix-react2shell-next@1.1.4:
+    resolution: {integrity: sha512-An2lCE2FuS48BKCi8EfJZU98IHZr6Whlhnuch90SYw+PsCYTj34dl1XGrbcp4PWf5jL0551uHZzBEKj98LGWXQ==}
+    engines: {node: '>=16'}
+    hasBin: true
 
   flat-cache@4.0.1:
     resolution: {integrity: sha512-f7ccFPK3SXFHpx15UIGyRJ/FJQctuKZ0zVuN3frBo4HnK3cay9VEW0R6yPYFHC0AgqhukPzKjq22t5DmAyqGyw==}
@@ -2965,6 +2973,8 @@ snapshots:
     dependencies:
       locate-path: 6.0.0
       path-exists: 4.0.0
+
+  fix-react2shell-next@1.1.4: {}
 
   flat-cache@4.0.1:
     dependencies:
