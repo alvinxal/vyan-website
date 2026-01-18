@@ -21,6 +21,8 @@ const TestimonialCard = ({
               src={profilePicture}
               alt='gambarcontoh'
               className='object-cover h-full'
+              width={100}
+              height={100}
             />
           </div>
           <div>
