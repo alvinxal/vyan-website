@@ -793,7 +793,7 @@ export default function AlternativePage() {
           {GUIDE_STEPS.map((step) => (
             <div
               key={step.id}
-              className={`guide-slide flex-shrink-0 w-[200px] h-[240px] rounded-sm overflow-hidden relative mt-[310px] origin-bottom opacity-50 ${step.image ? 'bg-black/5 hover:scale-105 transition-transform duration-300' : ''}`}
+              className={`guide-slide flex-shrink-0 w-[200px] h-[240px] rounded-sm overflow-hidden relative mt-[310px] origin-bottom opacity-50 ${step.image ? 'bg-black/5 transition-transform duration-300' : ''}`}
             >
               {step.image && (
                 <>

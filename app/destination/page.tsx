@@ -1,9 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { Tenor_Sans } from 'next/font/google'
+import { useState, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+
+const tenorSans = Tenor_Sans({ subsets: ['latin'], weight: ['400'] })
 
 // Hero data constant - array for carousel
 const destinationHeroData = [
@@ -29,16 +32,84 @@ const destinationHeroData = [
 
 // Gallery images data
 const galleryImages = [
-  { src: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&q=80', alt: 'Cliff' },
-  { src: 'https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?auto=format&fit=crop&w=400&q=80', alt: 'Cave' },
-  { src: 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=400&q=80', alt: 'Temple' },
-  { src: 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=400&q=80', alt: 'Ocean' },
-  { src: 'https://images.unsplash.com/photo-1552671080-1b725171796b?auto=format&fit=crop&w=400&q=80', alt: 'Statue' },
-  { src: 'https://images.unsplash.com/photo-1558005530-d7c4dd9847d2?auto=format&fit=crop&w=400&q=80', alt: 'Rice Fields' },
-  { src: 'https://images.unsplash.com/photo-1537953391640-642fae9ae8b7?auto=format&fit=crop&w=400&q=80', alt: 'Lake Temple' },
-  { src: 'https://images.unsplash.com/photo-1505933332464-424a91008038?auto=format&fit=crop&w=400&q=80', alt: 'Mountain Horse' },
-  { src: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=400&q=80', alt: 'Coastal View' },
-  { src: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=400&q=80', alt: 'Water Palace' },
+  { src: 'https://images.unsplash.com/photo-1546484488-2a1430996887?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', alt: 'Cultural Portrait' }, { src: 'https://images.unsplash.com/photo-1585302397841-b42e837d0d81?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', alt: 'Traditional Sari' },
+  { src: 'https://images.unsplash.com/photo-1542897730-cc0c1dd8b73b?q=80&w=2831&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', alt: 'Ceremony Procession' },
+ { src: 'https://images.unsplash.com/photo-1565970141926-c001afaf8577?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', alt: 'Dragon Dance' },
+  { src: 'https://images.unsplash.com/photo-1552301726-570d51466ae2?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', alt: 'Lake Ritual' },
+   { src: 'https://images.unsplash.com/photo-1612017888429-0110c5f45334?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', alt: 'Street Life' },
+]
+
+// Transport services data
+const transportData = [
+  {
+    id: 1,
+    title: "Ride in Total Comfort",
+    smallTitle: "Friendly Drivers Who Know the Way",
+    description: "Getting there shouldn't be a hassle. Think of our cars as your personal chill zone—plenty of legroom, icy AC, and everything you need to relax. Our drivers know the roads inside out, so you can just sit back, nap, or enjoy the view without worrying about a thing.",
+    images: [
+      {
+        src: "/ride1.webp",
+        alt: "Ride 1",
+        position: "small-left"
+      },
+      {
+        src: "/ride2.webp",
+        alt: "Ride 2",
+        position: "large-right"
+      },
+      {
+        src: "/ride3.webp",
+        alt: "Ride 3",
+        position: "bottom-interior"
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: "Stay Somewhere Special",
+    smallTitle: "Unique Private Villas",
+    description: "We skip the boring chain hotels to find you places with actual character. Whether it's a hidden bamboo house in the rice terraces or a villa right on the cliff edge, these are spots that actually feel like Bali. It's less about gold faucets and more about great views and peace and quiet.",
+   images: [
+      {
+        src: "/woman-swimming.webp",
+        alt: "Woman Swimming",
+        position: "small-left"
+      },
+      {
+        src: "/villa-inside.webp",
+        alt: "Villa Inside",
+        position: "large-right"
+      },
+      {
+        src: "/cafe-on-beach.webp",
+        alt: "Cafe on Beach",
+        position: "bottom-interior"
+      }
+    ]
+  },
+  {
+    id: 3,
+    title: "Real Food, No Tourist Traps",
+    smallTitle: "Authentic Local Eats",
+    description: "We want you to taste the food that locals actually eat. We bypass the overpriced tourist spots and take you to the hidden gems we love. From traditional family feasts to quiet dinners overlooking the jungle, you're going to experience the real flavors of the island.",
+    images: [
+      {
+        src: "/food1.webp",
+        alt: "Food 1",
+        position: "small-left"
+      },
+      {
+        src: "/bartender.webp",
+        alt: "Bartender",
+        position: "large-right"
+      },
+      {
+        src: "/food2.webp",
+        alt: "Food 2",
+        position: "bottom-interior"
+      }
+    ]
+  }
 ]
 
 // Hero Section Component
@@ -210,6 +281,22 @@ const CINEMATIC_EASE = "easeInOut";
 
 // Gallery Section Component
 const GallerySection = () => {
+  // Editorial Layout Configuration: 5 Columns
+  // Row 1: 1:2:2
+  // Row 2: 2:2:1
+  const layoutSpecs = [
+    "lg:col-span-1 col-span-2", // 1. Cliff (1 unit)
+    "lg:col-span-2 col-span-2", // 2. Cave (2 units)
+    "lg:col-span-2 col-span-2", // 3. Temple (2 units)
+    
+    "lg:col-span-2 col-span-2", // 4. Ocean (2 units)
+    "lg:col-span-2 col-span-2", // 5. Statue (2 units)
+    "lg:col-span-1 col-span-2", // 6. Rice Fields (1 unit)
+  ];
+
+  // We only display the first 6 images to maintain the strict 2-row layout
+  const displayImages = galleryImages.slice(0, 6);
+
   return (
     <section id="gallery" className="bg-white text-[#333] py-20 px-6 lg:px-[60px] overflow-hidden">
       <div className="max-w-[1400px] mx-auto">
@@ -225,11 +312,12 @@ const GallerySection = () => {
             </motion.h1>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-[15px] mb-[60px]">
-          {galleryImages.map((image, index) => (
+        {/* 5-Column Editorial Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6 mb-[60px]">
+          {displayImages.map((image, index) => (
             <motion.div 
                 key={index} 
-                className="aspect-[4/3] overflow-hidden bg-gray-100 relative group"
+                className={`relative group overflow-hidden h-[250px] lg:h-[350px] ${layoutSpecs[index]}`}
                 initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" }}
                 whileInView={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}
                 viewport={{ once: true, margin: "-50px" }}
@@ -238,10 +326,25 @@ const GallerySection = () => {
               <Image
                 src={image.src}
                 alt={image.alt}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                width={400}
-                height={500}
+                className="w-full h-full object-cover transition-transform duration-[1.2s] group-hover:scale-110" 
+                width={800}
+                height={600}
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+              
+              {/* Location Name Overlay - Bottom Left */}
+              <motion.div 
+                className="absolute bottom-6 left-6 z-10"
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 + (index * 0.1), duration: 0.8 }}
+              >
+                <div className="overflow-hidden">
+                    <span className={`block text-white text-lg lg:text-xl font-medium tracking-wide ${tenorSans.className} transform transition-transform duration-500 group-hover:-translate-y-1`}>
+                        {image.alt}
+                    </span>
+                </div>
+              </motion.div>
             </motion.div>
           ))}
         </div>
@@ -263,7 +366,7 @@ const GallerySection = () => {
             viewport={{ once: true }}
             transition={{ duration: 1, ease: CINEMATIC_EASE, delay: 0.6 }}
           >
-            We&apos;ve chosen some of Bali&apos;s most amazing landscapes for those who want to see more than just the usual spots
+            We've chosen some of Bali's most amazing landscapes for those who want to see more than just the usual spots
           </motion.p>
         </div>
       </div>
@@ -273,101 +376,331 @@ const GallerySection = () => {
 
 // Transport Section Component
 const TransportSection = () => {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  // Parallax scroll effects for the entire section
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  })
+
   return (
-    <section id="transport" className="bg-white text-[#2c3e50] py-20 lg:py-[120px] px-6 lg:px-24 min-h-screen flex justify-center items-center overflow-hidden">
-      <div className="relative w-full max-w-[1280px] grid grid-cols-12 gap-y-10 lg:gap-0">
-        {/* Headline */}
-        <div className="col-span-12 lg:col-span-7 lg:col-start-4 row-start-1 font-['Tenor_Sans'] text-4xl lg:text-[68px] font-normal leading-[1.08] text-[#3a3a3a] tracking-[-1px] z-[3] self-start pt-0 lg:pt-[68px] mb-0 relative">
-             <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, ease: CINEMATIC_EASE, delay: 0.2 }}
-             >
-                Your Private Sanctuary<br />on Wheels
-             </motion.div>
-        </div>
-
-        {/* Small Left Image */}
+    <section ref={sectionRef} id="transport" className="bg-white text-[#2c3e50] py-20 lg:py-[120px] px-6 lg:px-[60px] overflow-hidden">
+      <div className="max-w-[1400px] mx-auto">
+        {/* Section Title */}
         <motion.div 
-            className="hidden lg:block col-span-3 row-start-1 w-[240px] aspect-[4/5] self-start mt-3 overflow-hidden"
-            initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" }}
-            whileInView={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.4, ease: CINEMATIC_EASE }}
+          className="text-center mb-20"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: CINEMATIC_EASE }}
         >
-          <Image
-            src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=400"
-            alt="Jungle car"
-            className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
-            width={400}
-            height={500}
-          />
-        </motion.div>
-
-        {/* Large Right Image */}
-        <motion.div 
-            className="hidden lg:block col-span-5 col-start-8 row-span-2 row-start-1 h-[600px] mt-48 self-start overflow-hidden"
-            initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" }}
-            whileInView={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.4, ease: CINEMATIC_EASE, delay: 0.3 }}
-        >
-          <Image
-            src="https://images.unsplash.com/photo-1542332205-4da5c5217d09?auto=format&fit=crop&q=80&w=800"
-            alt="Transport"
-            className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" 
-            width={400}
-            height={500}
-          />
-        </motion.div>
-
-        {/* Text Block */}
-        <motion.div 
-            className="col-span-12 lg:col-span-3 lg:col-start-2 row-start-2 pt-8 lg:pt-64 max-w-[280px]"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: CINEMATIC_EASE, delay: 0.6 }}
-        >
-          <h2 className="text-sm font-medium text-[#666] mb-5 tracking-[0.3px] uppercase">
-            Experienced Chauffeur-Guides
-          </h2>
-          <p className="text-[15px] leading-[1.68] text-[#666] font-light">
-            Travel should be as restorative as the destination itself. Our curated fleet offers more than just transit; it is your private lounge between horizons. Spacious, climate-controlled, and stocked with thoughtful amenities to ensure your journey is seamless.
+          <p className="text-base text-[#999] capitalize tracking-[0.5px] mb-4 font-normal">
+            Handpicked for You
           </p>
         </motion.div>
 
-        {/* Bottom Interior Image */}
-        <motion.div 
-            className="hidden lg:block col-span-2 col-start-5 row-start-2 w-[260px] h-[320px] mt-64 -ml-2 overflow-hidden"
-            initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" }}
-            whileInView={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.4, ease: CINEMATIC_EASE, delay: 0.5 }}
+        {/* Service 1: Ride - Images RIGHT, Text LEFT */}
+        <ServiceItem 
+          data={transportData[0]} 
+          layout="right"
+          scrollProgress={scrollYProgress}
+          parallaxSpeeds={{ small: [60, -80], large: [150, -180], bottom: [220, -260], text: [30, -40] }}
+        />
+
+        {/* Service 2: Stay - Images LEFT, Text RIGHT (Mirrored) */}
+        <ServiceItem 
+          data={transportData[1]} 
+          layout="left"
+          scrollProgress={scrollYProgress}
+          parallaxSpeeds={{ small: [80, -100], large: [180, -220], bottom: [250, -300], text: [35, -50] }}
+        />
+
+        {/* Service 3: Food - Images RIGHT, Text LEFT (Different arrangement) */}
+        <ServiceItem 
+          data={transportData[2]} 
+          layout="right-alt"
+          scrollProgress={scrollYProgress}
+          parallaxSpeeds={{ small: [70, -90], large: [160, -200], bottom: [240, -280], text: [32, -45] }}
+        />
+      </div>
+    </section>
+  )
+}
+
+// Individual Service Item Component
+const ServiceItem = ({ 
+  data, 
+  layout, 
+  scrollProgress,
+  parallaxSpeeds 
+}: { 
+  data: typeof transportData[0]; 
+  layout: 'left' | 'right' | 'right-alt';
+  scrollProgress: any;
+  parallaxSpeeds: { small: [number, number]; large: [number, number]; bottom: [number, number]; text: [number, number] };
+}) => {
+  // Debug logging
+  console.log(`ServiceItem - ${data.title}:`, {
+    layout,
+    images: data.images.map(img => ({ src: img.src, position: img.position }))
+  });
+
+  const ySmall = useTransform(scrollProgress, [0, 1], parallaxSpeeds.small)
+  const yLarge = useTransform(scrollProgress, [0, 1], parallaxSpeeds.large)
+  const yBottom = useTransform(scrollProgress, [0, 1], parallaxSpeeds.bottom)
+  const yText = useTransform(scrollProgress, [0, 1], parallaxSpeeds.text)
+
+  if (layout === 'right') {
+    // Layout 1: Text LEFT, Images RIGHT
+    return (
+      <div className="grid grid-cols-12 gap-8 mb-32 lg:mb-48 min-h-[600px] relative">
+        {/* Text Block - Left Side */}
+        <motion.div
+          className="col-span-12 lg:col-span-5 flex flex-col justify-center z-10"
+          style={{ y: yText }}
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1, ease: CINEMATIC_EASE }}
+        >
+          <h2 className="text-sm font-medium text-[#666] mb-4 tracking-[0.3px] uppercase">
+            {data.smallTitle}
+          </h2>
+          <h3 className={`font-['Tenor_Sans'] text-4xl lg:text-5xl font-normal mb-6 text-[#2c3e50]`}>
+            {data.title}
+          </h3>
+          <p className="text-base leading-relaxed text-[#666] font-light max-w-[480px]">
+            {data.description}
+          </p>
+        </motion.div>
+
+        {/* Images - Right Side */}
+        <div className="col-span-12 lg:col-span-7 relative h-[500px] lg:h-[600px]">
+          {/* Large Image */}
+          <motion.div
+            className="absolute top-0 right-0 w-[60%] h-[70%] overflow-hidden rounded-sm"
+            style={{ y: yLarge }}
+            initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)", opacity: 0 }}
+            whileInView={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", opacity: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1.2, ease: CINEMATIC_EASE }}
+          >
+            <Image
+              src={data.images.find(img => img.position === 'large-right')?.src || ''}
+              alt={data.images.find(img => img.position === 'large-right')?.alt || ''}
+              className="w-full h-full object-cover"
+              width={600}
+              height={700}
+            />
+          </motion.div>
+
+          {/* Small Image */}
+          <motion.div
+            className="absolute bottom-0 left-0 w-[45%] h-[50%] overflow-hidden rounded-sm"
+            style={{ y: ySmall }}
+            initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)", opacity: 0 }}
+            whileInView={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", opacity: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1.2, ease: CINEMATIC_EASE, delay: 0.2 }}
+          >
+            <Image
+              src={data.images.find(img => img.position === 'small-left')?.src || ''}
+              alt={data.images.find(img => img.position === 'small-left')?.alt || ''}
+              className="w-full h-full object-cover"
+              width={400}
+              height={500}
+            />
+          </motion.div>
+
+          {/* Bottom Accent Image */}
+          <motion.div
+            className="absolute top-[40%] right-[15%] w-[35%] h-[40%] overflow-hidden rounded-sm"
+            style={{ y: yBottom }}
+            initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)", opacity: 0 }}
+            whileInView={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", opacity: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1.2, ease: CINEMATIC_EASE, delay: 0.4 }}
+          >
+            <Image
+              src={data.images.find(img => img.position === 'bottom-interior')?.src || ''}
+              alt={data.images.find(img => img.position === 'bottom-interior')?.alt || ''}
+              className="w-full h-full object-cover"
+              width={400}
+              height={500}
+            />
+          </motion.div>
+        </div>
+      </div>
+    )
+  }
+
+  if (layout === 'left') {
+    // Layout 2: Images LEFT, Text RIGHT (Mirrored)
+    return (
+      <div className="grid grid-cols-12 gap-8 mb-32 lg:mb-48 min-h-[600px] relative">
+        {/* Images - Left Side */}
+        <div className="col-span-12 lg:col-span-7 relative h-[500px] lg:h-[600px] order-2 lg:order-1 z-0">
+          {/* Large Image */}
+          <motion.div
+            className="absolute top-0 left-0 w-[60%] h-[70%] overflow-hidden rounded-sm z-10"
+            style={{ y: yLarge }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1.2, ease: CINEMATIC_EASE }}
+          >
+            <Image
+              src={data.images.find(img => img.position === 'large-right')?.src || ''}
+              alt={data.images.find(img => img.position === 'large-right')?.alt || ''}
+              className="w-full h-full object-cover"
+              width={600}
+              height={700}
+            />
+          </motion.div>
+
+          {/* Small Image */}
+          <motion.div
+            className="absolute bottom-0 right-0 w-[45%] h-[50%] overflow-hidden rounded-sm z-20"
+            style={{ y: ySmall }}
+            initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)", opacity: 0 }}
+            whileInView={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", opacity: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1.2, ease: CINEMATIC_EASE, delay: 0.2 }}
+          >
+            <Image
+              src={data.images.find(img => img.position === 'small-left')?.src || ''}
+              alt={data.images.find(img => img.position === 'small-left')?.alt || ''}
+              className="w-full h-full object-cover"
+              width={400}
+              height={500}
+            />
+          </motion.div>
+
+          {/* Bottom Accent Image */}
+          <motion.div
+            className="absolute top-[40%] left-[15%] w-[35%] h-[40%] overflow-hidden rounded-sm z-30"
+            style={{ y: yBottom }}
+            initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)", opacity: 0 }}
+            whileInView={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", opacity: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1.2, ease: CINEMATIC_EASE, delay: 0.4 }}
+          >
+            <Image
+              src={data.images.find(img => img.position === 'bottom-interior')?.src || ''}
+              alt={data.images.find(img => img.position === 'bottom-interior')?.alt || ''}
+              className="w-full h-full object-cover"
+              width={400}
+              height={500}
+            />
+          </motion.div>
+        </div>
+
+        {/* Text Block - Right Side */}
+        <motion.div
+          className="col-span-12 lg:col-span-5 flex flex-col justify-center z-40 order-1 lg:order-2"
+          style={{ y: yText }}
+          initial={{ opacity: 0, x: 50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1, ease: CINEMATIC_EASE }}
+        >
+          <h2 className="text-sm font-medium text-[#666] mb-4 tracking-[0.3px] uppercase">
+            {data.smallTitle}
+          </h2>
+          <h3 className={`font-['Tenor_Sans'] text-4xl lg:text-5xl font-normal mb-6 text-[#2c3e50]`}>
+            {data.title}
+          </h3>
+          <p className="text-base leading-relaxed text-[#666] font-light max-w-[480px]">
+            {data.description}
+          </p>
+        </motion.div>
+      </div>
+    )
+  }
+
+  // Layout 3: Text LEFT, Images RIGHT (Alternative arrangement)
+  return (
+    <div className="grid grid-cols-12 gap-8 mb-32 lg:mb-48 min-h-[600px] relative">
+      {/* Text Block - Left Side */}
+      <motion.div
+        className="col-span-12 lg:col-span-5 flex flex-col justify-center z-10"
+        style={{ y: yText }}
+        initial={{ opacity: 0, x: -50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 1, ease: CINEMATIC_EASE }}
+      >
+        <h2 className="text-sm font-medium text-[#666] mb-4 tracking-[0.3px] uppercase">
+          {data.smallTitle}
+        </h2>
+        <h3 className={`font-['Tenor_Sans'] text-4xl lg:text-5xl font-normal mb-6 text-[#2c3e50]`}>
+          {data.title}
+        </h3>
+        <p className="text-base leading-relaxed text-[#666] font-light max-w-[480px]">
+          {data.description}
+        </p>
+      </motion.div>
+
+      {/* Images - Right Side (Different arrangement) */}
+      <div className="col-span-12 lg:col-span-7 relative h-[500px] lg:h-[600px]">
+        {/* Small Image Top */}
+        <motion.div
+          className="absolute top-0 left-0 w-[40%] h-[45%] overflow-hidden rounded-sm"
+          style={{ y: ySmall }}
+          initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)", opacity: 0 }}
+          whileInView={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", opacity: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.2, ease: CINEMATIC_EASE }}
         >
           <Image
-            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=400"
-            alt="Window view"
-            className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+            src={data.images.find(img => img.position === 'small-left')?.src || ''}
+            alt={data.images.find(img => img.position === 'small-left')?.alt || ''}
+            className="w-full h-full object-cover"
             width={400}
             height={500}
           />
         </motion.div>
 
-        {/* Pagination */}
-        <motion.div 
-            className="col-span-12 lg:col-span-2 lg:col-start-2 row-start-3 self-end text-xl border-b-[1.5px] border-[#2c3e50] w-fit pb-1 font-normal mt-48"
-            initial={{ scaleX: 0, originX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: CINEMATIC_EASE, delay: 0.8 }}
+        {/* Large Image */}
+        <motion.div
+          className="absolute top-[20%] right-0 w-[65%] h-[65%] overflow-hidden rounded-sm"
+          style={{ y: yLarge }}
+          initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)", opacity: 0 }}
+          whileInView={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", opacity: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.2, ease: CINEMATIC_EASE, delay: 0.2 }}
         >
-          01/03
+          <Image
+            src={data.images.find(img => img.position === 'large-right')?.src || ''}
+            alt={data.images.find(img => img.position === 'large-right')?.alt || ''}
+            className="w-full h-full object-cover"
+            width={600}
+            height={700}
+          />
         </motion.div>
+
+        {/* Bottom Accent Image */}
+        <motion.div
+          className="absolute bottom-0 left-[10%] w-[38%] h-[35%] overflow-hidden rounded-sm"
+          style={{ y: yBottom }}
+          initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)", opacity: 0 }}
+            whileInView={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", opacity: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1.2, ease: CINEMATIC_EASE, delay: 0.4 }}
+          >
+            <Image
+              src={data.images.find(img => img.position === 'bottom-interior')?.src || ''}
+              alt={data.images.find(img => img.position === 'bottom-interior')?.alt || ''}
+              className="w-full h-full object-cover"
+              width={400}
+              height={500}
+            />
+          </motion.div>
+        </div>
       </div>
-    </section>
-  )
+    )
+  
 }
 
 // Philosophy Section Component
@@ -391,7 +724,7 @@ const PhilosophySection = () => {
             viewport={{ once: true }}
             transition={{ duration: 1.2, ease: CINEMATIC_EASE, delay: 0.2 }}
         >
-          "These locations are just the start. We&apos;ll go wherever you&apos;re curious to explore. We can stay as long as you like and move on whenever you&apos;re ready."
+          "These locations are just the start. We'll go wherever you're curious to explore. We can stay as long as you like and move on whenever you're ready."
         </motion.h2>
       </div>
     </section>
@@ -437,7 +770,7 @@ const CustomSection = () => {
             <Image
               src="https://images.pexels.com/photos/28211183/pexels-photo-28211183.jpeg"
               alt="Gray concrete cross on top of gray concrete building"
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-[2s]"
+              className="w-full h-full object-cover transition-transform duration-[2s]"
               width={800}
               height={1000}
             />
@@ -453,7 +786,7 @@ const CustomSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 1, ease: CINEMATIC_EASE, delay: 0.6 }}
           >
-            Bali is an endless map of secrets, and the most beautiful corners are often the ones not found in any guidebook. If there is a hidden sanctuary you&apos;ve dreamt of visiting, a specific light you wish to chase for your lens, or a remote village you&apos;ve long desired to explore, we will find the way together. My expertise is your canvas, and I am dedicated to unlocking the doors to the island&apos;s most private and authentic experiences
+            Bali is an endless map of secrets, and the most beautiful corners are often the ones not found in any guidebook. If there is a hidden sanctuary you've dreamt of visiting, a specific light you wish to chase for your lens, or a remote village you've long desired to explore, we will find the way together. My expertise is your canvas, and I am dedicated to unlocking the doors to the island's most private and authentic experiences
           </motion.p>
         </div>
 
