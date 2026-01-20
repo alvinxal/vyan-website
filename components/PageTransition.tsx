@@ -2,9 +2,16 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePathname } from 'next/navigation'
+import { useLoading } from '@/lib/loading-context'
 
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const { isLoading } = useLoading()
+
+  // Don't render page transition until loading is complete
+  if (isLoading) {
+    return null
+  }
 
   return (
     <AnimatePresence mode="wait">

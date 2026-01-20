@@ -9,6 +9,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import { Instagram, Facebook, Twitter } from 'lucide-react'
 import FAQItem from '@/components/FAQItem'
+import { useLoading } from '@/lib/loading-context'
 
 const tenorSans = Tenor_Sans({ subsets: ['latin'], weight: ['400'] })
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['300', '400', '500', '600'] })
@@ -73,11 +74,9 @@ if (typeof window !== 'undefined') {
 //   description: 'Experience the soul of Bali with Vyan Abimanyu, a local friend who knows every hidden corner of the island.',
 // }
 
-const ICON_PATH_MAIN = "M287 111.468C273.947 113.913 263.23 123.314 253 131.116C238.82 141.93 224.765 152.013 207 155.789C194.801 158.383 178.807 159.462 167 154.743C156.571 150.575 147.837 142.67 137 139.44C117.193 133.537 96.9781 135.018 77 131.195C71.4159 130.127 66.0498 128.535 61 125.88C56.4255 123.474 52.206 120.241 47 119.329C42.2968 118.504 36.7059 118.849 33.7423 123.109C31.124 126.872 31.4419 133.185 33.7384 137C35.2779 139.557 38.3732 141.775 38.4182 145C38.4974 150.677 34.2829 154.667 35.4676 161C38.7452 178.523 54.6144 193.04 64.5725 207C69.0795 213.318 71.7658 221.31 77.1852 226.895C84.1875 234.111 93.5579 235 103 235C117.949 235 134.518 230.628 149 235.36C158.714 238.533 164.904 247.47 174 252.029C184.762 257.423 197.455 258.707 207.907 264.684C214.822 268.638 219.563 277.126 226 282.112C238.889 292.095 253.464 299.629 265.996 310.084C269.903 313.343 273.437 316.913 276.485 321C286.163 333.975 283.407 349.634 275.961 363C272.273 369.62 266.065 376.221 265.189 384C263.346 400.371 285.393 402.414 297 400.699C299.412 400.343 301.801 399.656 304 398.597C318.825 391.459 311.499 377.604 314.394 365C315.881 358.53 322.179 354.828 324.95 349C330.388 337.56 326.846 325.715 337.015 316.093C350.261 303.56 367.894 305.06 384 299.302C387.972 297.882 391.781 296.05 394.671 292.895C398.812 288.374 400.711 282.477 406.015 278.969C414.952 273.057 426.45 270.652 436 265.741C443.982 261.636 450.312 255.19 458 250.604C465.1 246.369 474.581 243.908 478.543 236C479.805 233.481 479.989 230.768 479.992 228C480.018 207.716 457.36 207.039 446.616 193.999C438.129 183.7 432.307 172.122 422 163.3C412.811 155.435 400.257 147.295 389 142.779C384.138 140.828 378.86 140.207 374 138.127C365.221 134.371 357.138 128.933 348 126.029C342.758 124.363 337.077 124.989 332 123.298C326.747 121.548 322.084 117.603 317 115.312C307.85 111.187 296.944 109.604 287 111.468z"
-const ICON_PATH_DETAIL = "M263 123L264 124L263 123M61 126L62 127L61 126M78 131L79 132L78 131M239 141L240 142L239 141M236 143L237 144L236 143M149 145L150 146L149 145M221 151L222 152L221 151M163 153L164 154L163 153M55 194L56 195L55 194M83 231L84 232L83 231M85 232L86 233L85 232M475 240L476 241L475 240M203 262L204 263L203 262M401 282L402 283L401 282M250 298L251 299L250 298M253 300L254 301L253 300M256 302L257 303L256 302M270 313L271 314L270 313M339 313L340 314L339 313M271 314L272 315L271 314z"
-const ICON_PATH_ISLAND = "M428 332.468C421.926 332.886 412.471 331.294 407 334.028C403.551 335.751 401.089 339.11 398 341.367C394.652 343.812 390.485 345.536 389.474 350.004C387.981 356.599 393.636 360.08 397.91 363.609C401.278 366.389 403.191 370.654 407.04 372.86C411.676 375.518 416.725 375.54 420.985 379.214C425.698 383.277 429.763 390.386 436.996 389.677C442.624 389.126 443.194 383.909 445.727 380C447.806 376.792 451.111 374.458 452.82 371C457.426 361.683 444.434 354.879 440.533 348C436.971 341.718 437.83 331.792 428 332.468z"
 
 export default function AlternativePage() {
+  const { isLoading } = useLoading()
   const guideSectionRef = useRef<HTMLElement>(null)
   const guideTrackRef = useRef<HTMLDivElement>(null)
   const mapContainerRef = useRef<HTMLDivElement>(null)
@@ -90,43 +89,9 @@ export default function AlternativePage() {
   const [selectedLocation, setSelectedLocation] = useState<typeof MAP_HOTSPOTS[0] | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [openFaqId, setOpenFaqId] = useState<number | null>(null)
-  const [loadingProgress, setLoadingProgress] = useState(0)
-  const [isLoading, setIsLoading] = useState(false)
-
-  useEffect(() => {
-    // Simulate loading with ultra-smooth progress using requestAnimationFrame
-    let startTime: number | null = null
-    const duration = 4000 // 4 seconds total
-
-    const animate = (currentTime: number) => {
-      if (startTime === null) startTime = currentTime
-      const elapsed = currentTime - startTime
-      const progress = Math.min(elapsed / duration, 1)
-
-      // Linear progress for perfect sync with SVG fill
-      const percentage = Math.round(progress * 100)
-      setLoadingProgress(percentage)
-
-      if (progress < 1) {
-        requestAnimationFrame(animate)
-      } else {
-        // Pause at 100% before transitioning out
-        setTimeout(() => {
-          setIsLoading(false)
-        }, 500) // 500ms pause at 100%
-      }
-    }
-
-    requestAnimationFrame(animate)
-
-    return () => {
-      startTime = null
-    }
-  }, [])
 
   // Custom cursor for map section
   useEffect(() => {
-    if (isLoading) return
     if (!cursorRef.current || !mapContainerRef.current) return
 
     const cursor = cursorRef.current
@@ -146,7 +111,7 @@ export default function AlternativePage() {
     const container = mapContainerRef.current
     container.addEventListener("mousemove", moveCursor)
     return () => container.removeEventListener("mousemove", moveCursor)
-  }, [isLoading])
+  }, [])
 
   // Custom "Close" cursor for modal
   useEffect(() => {
@@ -202,6 +167,9 @@ export default function AlternativePage() {
   }
 
   useEffect(() => {
+    // Only initialize Lenis after loading is complete
+    if (isLoading) return
+
     const lenis = new Lenis()
 
     function raf(time: number) {
@@ -214,7 +182,7 @@ export default function AlternativePage() {
     return () => {
       lenis.destroy()
     }
-  }, [])
+  }, [isLoading])
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -272,7 +240,7 @@ export default function AlternativePage() {
     })
 
     return () => ctx.revert()
-  }, [isLoading])
+  }, [])
 
   // Guide Section Horizontal Scroll Animation
   useEffect(() => {
@@ -320,8 +288,21 @@ export default function AlternativePage() {
         marginTop: 0
       })
       gsap.set(texts[1], {
+        opacity: 0,
+        y: 30
+      })
+
+      // Animate the first text separately on entrance
+      gsap.to(texts[1], {
         opacity: 1,
-        y: 0
+        y: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: guideSectionRef.current,
+          start: 'top 75%',
+          toggleActions: 'play none none none'
+        }
       })
 
       const tl = gsap.timeline({
@@ -383,7 +364,7 @@ export default function AlternativePage() {
     }, guideSectionRef)
 
     return () => ctx.revert()
-  }, [isLoading])
+  }, [])
 
   // Tours Section Text Entrance Animation
   useEffect(() => {
@@ -411,7 +392,7 @@ export default function AlternativePage() {
     })
 
     return () => ctx.revert()
-  }, [isLoading])
+  }, [])
 
   // Map Section Animations
   useEffect(() => {
@@ -448,7 +429,7 @@ export default function AlternativePage() {
     })
 
     return () => ctx.revert()
-  }, [isLoading])
+  }, [])
 
   // CTA Section Parallax
   useEffect(() => {
@@ -470,7 +451,7 @@ export default function AlternativePage() {
     })
 
     return () => ctx.revert()
-  }, [isLoading])
+  }, [])
 
 
   // Footer Reveal Animation
@@ -485,8 +466,8 @@ export default function AlternativePage() {
         ease: 'power3.out',
         scrollTrigger: {
           trigger: footerRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
+          start: 'top bottom',
+          toggleActions: 'play none none none'
         }
       })
 
@@ -499,14 +480,14 @@ export default function AlternativePage() {
         ease: 'back.out(1.7)',
         scrollTrigger: {
           trigger: footerRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
+          start: 'top bottom',
+          toggleActions: 'play none none none'
         }
       })
     })
 
     return () => ctx.revert()
-  }, [isLoading])
+  }, [])
 
   // FAQ Section Animation
   useEffect(() => {
@@ -539,129 +520,40 @@ export default function AlternativePage() {
     })
 
     return () => ctx.revert()
-  }, [isLoading])
+  }, [])
 
   // Main page content
   return (
-    <AnimatePresence mode="wait">
-      {isLoading ? (
-        <motion.div
-          className={`${montserrat.className} bg-[#F8F5F0] text-white leading-relaxed overflow-x-hidden bg-grain`}
-          exit={{
-            y: "100vh",
-            opacity: 0,
-            transition: {
-              duration: 1.5,
-              ease: [0.4, 0, 0.2, 1]
-            }
-          }}
-          layout
-        >
-          <motion.div
-            className="fixed inset-0 z-[99999] bg-[#F8F5F0] flex flex-col items-center justify-center text-[#2D2623]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <motion.div
-              className="flex flex-col items-center"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                duration: 0.6,
-                delay: 0.5,
-                ease: [0.4, 0, 0.2, 1]
-              }}
-            >
-              <div className="relative w-56 h-56 mb-8">
-                {/* Outline Layer (Border) */}
-                <svg viewBox="0 0 512 512" className="absolute inset-0 w-full h-full z-20" fill="none" stroke="#2D2623" strokeWidth="6">
-                  <path d={ICON_PATH_MAIN} />
-                  <path d={ICON_PATH_DETAIL} />
-                  <path d={ICON_PATH_ISLAND} />
-                </svg>
-
-                {/* Fill Layer Container (Masked) */}
-                <motion.div
-                  className="absolute bottom-0 left-0 w-full overflow-hidden z-10"
-                  style={{
-                    height: `${loadingProgress}%`
-                  }}
-                  initial={{ height: 0 }}
-                  animate={{ height: `${loadingProgress}%` }}
-                  transition={{ duration: 0.1, ease: "linear" }}
-                >
-                  {/* Inner SVG (Filled - No Gap) */}
-                  <div className="absolute bottom-0 left-0 w-full h-56">
-                    <svg viewBox="0 0 512 512" className="w-full h-full" fill="#2D2623" stroke="none">
-                      <path d={ICON_PATH_MAIN} />
-                      <path d={ICON_PATH_DETAIL} />
-                      <path d={ICON_PATH_ISLAND} />
-                    </svg>
-                  </div>
-                </motion.div>
-              </div>
-
-              <motion.div
-                className={`text-lg font-medium tracking-widest ${montserrat.className}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.8 }}
-              >
-                {Math.round(loadingProgress)}%
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </motion.div>
-      ) : (
-        <motion.div
-          className={`${montserrat.className} bg-[#F8F5F0] text-white leading-relaxed overflow-x-hidden bg-grain`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-        >
+    <div className={`${montserrat.className} bg-[#F8F5F0] text-white leading-relaxed overflow-x-hidden bg-grain`}>
       {/* Header */}
       <motion.header 
-        className="absolute inset-x-0 top-0 z-10 py-6"
+        className="absolute top-0 w-full flex justify-between items-center px-6 lg:px-[60px] py-10 z-20"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+        transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
       >
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-[60px] flex justify-between items-center">
-          <motion.div 
-            className={`header-logo text-xl font-bold ${tenorSans.className}`}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            Vyan Abimanyu
-          </motion.div>
-          <nav className="flex gap-16">
-            <motion.div
+       <Link href="/" className={`text-2xl font-normal tracking-wide text-white ${tenorSans.className}`}>
+          Vyan Abimanyu
+        </Link>
+        <nav className="hidden md:flex gap-10">
+          {['Destination', 'Inquiry'].map((item, index) => (
+            <motion.a
+              key={item}
+              href={item === 'Inquiry' ? '/inquiry' : '/destination'}
+              className="text-white text-sm font-normal hover:opacity-70 transition-opacity"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.25 }}
+              transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
             >
-              <Link href="/destination" className="header-nav-item header-nav-1 text-sm font-medium opacity-80 hover:opacity-100 transition-opacity">
-                Destination
-              </Link>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <Link href="/inquiry" className="header-nav-item header-nav-2 text-sm font-medium opacity-80 hover:opacity-100 transition-opacity">
-                Inquiry
-              </Link>
-            </motion.div>
-          </nav>
-        </div>
+              {item}
+            </motion.a>
+          ))}
+        </nav>
       </motion.header>
 
       {/* Hero Section */}
       <section className="relative h-screen min-h-[600px] flex items-center justify-center text-center z-0 mb-20">
-        <div className="max-w-6xl mx-auto px-6 z-10 -translate-y-[30%] text-white">
+        <div className="max-w-6xl mx-auto px-6 z-10 text-white">
           <h1 className={`text-6xl leading-tight mb-6 mx-auto ${tenorSans.className}`}>
             <motion.span 
               className="hero-heading-line-1 block"
@@ -681,7 +573,7 @@ export default function AlternativePage() {
             </motion.span>
           </h1>
           <motion.p 
-            className="hero-paragraph max-w-lg mx-auto mb-10"
+            className="hero-paragraph max-w-4xl mx-auto mb-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
@@ -963,14 +855,14 @@ export default function AlternativePage() {
                   whileHover={{ x: 5, scale: 1.1 }}
                   transition={{ duration: 0.3 }}
                 >
-                  →
+                  <span className="text-lg text-[#30373C] ${tenorSans.className} pb-0.5">→</span>
                 </motion.span>
               </Link>
             </div>
 
             {/* Paragraph offset to the right */}
             <div className="md:w-2/3 md:pl-20">
-              <p className="text-[#30373C] text-base md:text-lg leading-[1.8] font-light">
+              <p className="text-[#30373C] text-base md:text-lg leading-[1.8] font-light text-right">
                 I firmly believe that no two travelers are the same, and your journey should be as unique as your own fingerprint. While I provide meticulously curated experiences and insider recommendations, the final itinerary always remains firmly in your hands. 
                 <span className="block mt-6 text-[#6B6560] text-sm md:text-base">
                   I understand that the best travel moments often happen in the unplanned gaps.
@@ -1132,10 +1024,8 @@ export default function AlternativePage() {
             </div>
           </motion.div>
         </motion.div>
-        )}
-      </AnimatePresence>
-        </motion.div>
       )}
-    </AnimatePresence>
+      </AnimatePresence>
+    </div>
   )
 }

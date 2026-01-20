@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, ChangeEvent, FormEvent } from 'react'
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react'
 import { Tenor_Sans, Montserrat } from 'next/font/google'
 import Link from 'next/link'
+import Lenis from 'lenis'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Instagram, Phone, Mail, Loader2, Calendar } from 'lucide-react'
+import { Instagram, Phone, Mail, Loader2, Calendar, Facebook, Twitter } from 'lucide-react'
 
 const tenorSans = Tenor_Sans({ subsets: ['latin'], weight: ['400'] })
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['300', '400', '500', '600'] })
@@ -52,29 +53,25 @@ const Toast = ({ message, isVisible, onClose, type = 'success' }: { message: str
 const Header = () => (
     <motion.header 
       className="flex justify-between items-center mb-16 lg:mb-20"
-      initial={{ opacity: 0, y: -20 }}
+      initial={{ opacity: 0, y: -30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
     >
-      <Link href="/" className={`text-xl font-bold tracking-wide text-[#2D2623] ${tenorSans.className}`}>
+     <Link href="/" className={`text-2xl font-normal tracking-wide text-[#2D2623] ${tenorSans.className}`}>
         Vyan Abimanyu
       </Link>
-      <nav className="hidden md:flex items-center gap-10">
+      <nav className="hidden md:flex gap-10">
         {['Destination', 'Inquiry'].map((item, index) => (
-          <motion.div
+          <motion.a
             key={item}
-            initial={{ opacity: 0, y: -10 }}
+            href={item === 'Inquiry' ? '/inquiry' : '/destination'}
+            className="text-[#2D2623] text-sm font-normal hover:opacity-70 transition-opacity"
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 + index * 0.1 }}
+            transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
           >
-            <Link
-              href={item === "Destination" ? "/destination" : "/inquiry"}
-              className={`text-sm font-medium text-[#2D2623]/80 hover:text-[#2D2623] transition-colors relative group ${montserrat.className}`}
-            >
-              {item}
-              <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#2D2623] transition-all duration-300 group-hover:w-full"></span>
-            </Link>
-          </motion.div>
+            {item}
+          </motion.a>
         ))}
       </nav>
       {/* Mobile Menu Icon (Placeholder) */}
@@ -185,13 +182,19 @@ const ContactForm = ({ onSubmit }: { onSubmit: (data: FormData) => Promise<void>
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.3 }
+      transition: { staggerChildren: 0.08, delayChildren: 0.2 }
     }
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8
+      }
+    }
   };
 
   return (
@@ -325,6 +328,17 @@ const QuoteSection = () => (
 export default function InquiryPage() {
   const [toast, setToast] = useState<ToastState>({ show: false, message: '', type: 'success' });
 
+  useEffect(() => {
+    const lenis = new Lenis()
+
+    function raf(time: number) {
+      lenis.raf(time)
+      requestAnimationFrame(raf)
+    }
+
+    requestAnimationFrame(raf)
+  }, [])
+
   const handleFormSubmit = async (data: FormData) => {
     try {
       const response = await fetch('/api/inquiry', {
@@ -367,10 +381,11 @@ export default function InquiryPage() {
   return (
     <div className={`min-h-screen bg-[#F8F5F0] text-[#2D2623] antialiased bg-grain selection:bg-[#2D2623] selection:text-[#F8F5F0]`}>
       
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-[60px] py-10 lg:py-[40px]">
-        <Header />
+      <div className="px-6 lg:px-[60px] pb-20 pt-10">
+        <div className="max-w-[1400px] mx-auto">
+          <Header />
 
-        <main className="flex flex-col lg:flex-row relative justify-between items-start mb-12 gap-12 lg:gap-24">
+          <main className="flex flex-col lg:flex-row relative justify-between items-start mb-12 gap-12 lg:gap-24">
           {/* Left Column: Content */}
           <div className="w-full lg:flex-1 lg:max-w-[600px] z-10 relative">
             <motion.div
@@ -391,7 +406,7 @@ export default function InquiryPage() {
 
           {/* Right Column: Image */}
           <motion.div 
-            className="relative w-full lg:w-[45vw] lg:h-[800px] h-[500px] rounded-lg overflow-hidden shadow-2xl lg:absolute lg:top-0 lg:right-0 lg:-mr-[60px]"
+            className="relative w-full lg:w-[45vw] lg:h-[800px] h-[500px] rounded-l-lg overflow-hidden shadow-2xl lg:absolute lg:top-0 lg:right-0 lg:-mr-[60px]"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
@@ -414,11 +429,30 @@ export default function InquiryPage() {
         </main>
 
         <QuoteSection />
+        </div>
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-[#2D2623]/10 py-8 text-center bg-[#F8F5F0]">
-        <p className={`text-xs text-[#6B6560]/60 ${montserrat.className}`}>© {new Date().getFullYear()} Vyan Abimanyu. All rights reserved.</p>
+      <footer className="py-20 px-6 lg:px-[60px] border-t border-[#2D2623]/10 text-[#6B6560]">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="flex justify-between items-start mb-16">
+            <div>
+              <h3 className={`text-3xl mb-6 text-[#6B6560] ${tenorSans.className}`}>Vyan Abimanyu</h3>
+              <p className="text-[#6B6560]">Bali, Indonesia</p>
+            </div>
+            <div className="max-w-[400px] text-[#6B6560] leading-relaxed text-right">
+              <p>Your local companion for a deeper connection. Dedicated to exploring the soul of Bali through the eyes of a friend, where every curated moment is anchored in safety, authenticity, and heart.</p>
+            </div>
+          </div>
+          <div className="flex justify-between items-center text-gray-500">
+             <p>&copy; 2026 Web by <Link href="https://flaat.studio" target="_blank" rel="noopener noreferrer" className='font-semibold hover:text-[#2D2623] transition-colors'>Flaat Studio</Link></p>
+            <div className="flex gap-6">
+              <Instagram className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
+              <Facebook className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
+              <Twitter className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
+            </div>
+          </div>
+        </div>
       </footer>
 
       <Toast

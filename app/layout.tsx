@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import PageTransition from "@/components/PageTransition";
+import GlobalLoader from "@/components/GlobalLoader";
+import { LoadingProvider } from "@/lib/loading-context";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -24,7 +26,10 @@ export default function RootLayout({
   return (
     <html lang='en' className='scroll-smooth'>
       <body className={`${montserrat.className} antialiased `}>
-        <PageTransition>{children}</PageTransition>
+        <LoadingProvider>
+          <GlobalLoader />
+          <PageTransition>{children}</PageTransition>
+        </LoadingProvider>
       </body>
     </html>
   );

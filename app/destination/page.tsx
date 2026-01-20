@@ -1,10 +1,12 @@
 'use client'
 
 import { Tenor_Sans } from 'next/font/google'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+import Lenis from 'lenis'
+import { Instagram, Facebook, Twitter } from 'lucide-react'
 
 const tenorSans = Tenor_Sans({ subsets: ['latin'], weight: ['400'] })
 
@@ -113,6 +115,7 @@ const transportData = [
 ]
 
 // Hero Section Component
+
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
 
@@ -276,6 +279,55 @@ const HeroSection = () => {
   )
 }
 
+const GalleryItem = ({ image, className, index }: { image: { src: string, alt: string }, className: string, index: number }) => {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  })
+  
+  const y = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"])
+
+  return (
+    <motion.div 
+        ref={ref}
+        className={`relative group overflow-hidden ${className}`}
+        initial={{ opacity: 0, y: 100 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 1.2, ease: "easeOut", delay: index * 0.15 }}
+    >
+      <motion.div 
+        className="w-full h-[125%] -top-[12.5%] relative" 
+        style={{ y }}
+      >
+          <Image
+            src={image.src}
+            alt={image.alt}
+            className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105" 
+            width={800}
+            height={600}
+          />
+      </motion.div>
+      
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500 pointer-events-none" />
+               
+      <motion.div 
+        className="absolute bottom-6 left-6 z-10 pointer-events-none"
+        initial={{ opacity: 0, x: -10 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.2 + (index * 0.1), duration: 0.8 }}
+      >
+        <div className="overflow-hidden">
+            <span className={`block text-white text-lg lg:text-xl font-medium tracking-wide ${tenorSans.className} transform transition-transform duration-500 group-hover:-translate-y-1 drop-shadow-md`}>
+                {image.alt}
+            </span>
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
 // Cinematic easing for "premium" feel
 const CINEMATIC_EASE = "easeInOut";
 
@@ -300,9 +352,9 @@ const GallerySection = () => {
   return (
     <section id="gallery" className="bg-white text-[#333] py-20 px-6 lg:px-[60px] overflow-hidden">
       <div className="max-w-[1400px] mx-auto">
-        <div className="overflow-hidden mb-[60px]">
-            <motion.h1 
-                className="font-['Tenor_Sans'] text-5xl lg:text-[64px] font-normal text-[#2c3e50]"
+        <div className=" mb-[60px]">
+            <motion.h1
+                className="font-['Tenor_Sans'] text-[64px] font-normal text-[#2c3e50]"
                 initial={{ y: "100%" }}
                 whileInView={{ y: 0 }}
                 viewport={{ once: true }}
@@ -315,52 +367,37 @@ const GallerySection = () => {
         {/* 5-Column Editorial Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6 mb-[60px]">
           {displayImages.map((image, index) => (
-            <motion.div 
-                key={index} 
-                className={`relative group overflow-hidden h-[250px] lg:h-[350px] ${layoutSpecs[index]}`}
-                initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" }}
-                whileInView={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 1.4, ease: CINEMATIC_EASE, delay: index * 0.1 }}
-            >
-              <Image
-                src={image.src}
-                alt={image.alt}
-                className="w-full h-full object-cover transition-transform duration-[1.2s] group-hover:scale-110" 
-                width={800}
-                height={600}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-              
-              {/* Location Name Overlay - Bottom Left */}
-              <motion.div 
-                className="absolute bottom-6 left-6 z-10"
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 + (index * 0.1), duration: 0.8 }}
-              >
-                <div className="overflow-hidden">
-                    <span className={`block text-white text-lg lg:text-xl font-medium tracking-wide ${tenorSans.className} transform transition-transform duration-500 group-hover:-translate-y-1`}>
-                        {image.alt}
-                    </span>
-                </div>
-              </motion.div>
-            </motion.div>
+            <GalleryItem 
+              key={index}
+              image={image}
+              index={index}
+              className={`h-[250px] lg:h-[350px] ${layoutSpecs[index]}`}
+            />
           ))}
         </div>
 
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mt-10 gap-8">
           <motion.button 
-            className="py-[15px] px-10 border border-[#333] bg-transparent rounded-full font-['Montserrat'] text-base cursor-pointer transition-all hover:bg-[#333] hover:text-white"
+            className="group inline-flex items-center gap-2 bg-transparent border-none cursor-pointer p-0"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1, ease: CINEMATIC_EASE, delay: 0.4 }}
           >
-            Plan Your Trip
+            <span className={`text-lg text-[#30373C] ${tenorSans.className} border-b border-[#30373C] pb-0.5`}>
+              Plan Your Trip
+            </span>
+            <motion.span 
+              initial={{ x: 0, scale: 1 }}
+              whileHover={{ x: 5, scale: 1.1 }}
+              transition={{ duration: 0.3 }}
+              className="text-[#30373C] text-lg"
+            >
+              →
+            </motion.span>
           </motion.button>
           <motion.p 
-            className="max-w-[400px] text-left text-[15px] text-[#777] font-light"
+            className="max-w-[400px] text-[#30373C] text-base md:text-lg leading-[1.8] font-light text-right"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -385,7 +422,7 @@ const TransportSection = () => {
   })
 
   return (
-    <section ref={sectionRef} id="transport" className="bg-white text-[#2c3e50] py-20 lg:py-[120px] px-6 lg:px-[60px] overflow-hidden">
+    <section ref={sectionRef} id="transport" className="bg-white text-[#2c3e50] px-6 pt-40 lg:px-[60px] overflow-hidden">
       <div className="max-w-[1400px] mx-auto">
         {/* Section Title */}
         <motion.div 
@@ -394,12 +431,11 @@ const TransportSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1, ease: CINEMATIC_EASE }}
-        >
-          <p className="text-base text-[#999] capitalize tracking-[0.5px] mb-4 font-normal">
+        >   <span className="faq-subtitle block mb-4 text-[#6B6560] text-sm uppercase tracking-widest font-medium">Facilites You Get</span>
+          <h2 className={`text-6xl leading-tight text-[#30373C] ${tenorSans.className}`}>
             Handpicked for You
-          </p>
+          </h2>
         </motion.div>
-
         {/* Service 1: Ride - Images RIGHT, Text LEFT */}
         <ServiceItem 
           data={transportData[0]} 
@@ -706,7 +742,7 @@ const ServiceItem = ({
 // Philosophy Section Component
 const PhilosophySection = () => {
   return (
-    <section id="philosophy" className="bg-white flex justify-center items-center min-h-screen py-20 px-5">
+    <section id="philosophy" className="bg-white flex justify-center px-5 pb-64">
       <div className="text-center max-w-[1000px]">
         <motion.p 
             className="text-base text-[#999] capitalize tracking-[0.5px] mb-12 font-normal"
@@ -733,28 +769,35 @@ const PhilosophySection = () => {
 
 // Custom Section Component
 const CustomSection = () => {
+  const sectionRef = useRef<HTMLElement>(null)
+  
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "start 10%"]
+  })
+  
+  // Image is always 100% scale, but reveals from center using clip-path (square reveal)
+  const clipPath = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ["inset(50% 50% 50% 50%)", "inset(0% 0% 0% 0%)"]
+  )
+  
+  // Image opacity fades in alongside the reveal
+  const imageOpacity = useTransform(scrollYProgress, [0, 1], [0, 1])
+  
+  // Text opacity appears smoothly after image is 90% revealed
+  const textOpacity = useTransform(scrollYProgress, [0.9, 1], [0, 1])
+  
   return (
-    <section id="custom" className="bg-white text-[#333] py-[60px] px-6 lg:px-10 min-h-screen flex flex-col relative overflow-hidden">
+    <section ref={sectionRef} id="custom" className="bg-white text-[#333] py-[60px] px-6 lg:px-10 min-h-screen flex flex-col relative overflow-hidden">
       <div className="max-w-[1400px] mx-auto w-full">
-        <motion.div 
-            className="text-base font-normal text-[#666] mb-5"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.2 }}
-        >
-            Custom Your Trip
-        </motion.div>
 
         <main className="flex flex-col items-center relative -mt-5">
           {/* Large Title overlaying image */}
           <motion.h1 
             className="absolute top-[45%] -translate-y-1/2 font-['Tenor_Sans'] text-4xl lg:text-[90px] font-normal tracking-[2px] whitespace-nowrap lg:whitespace-normal z-[2] pointer-events-none text-white text-center lg:text-left" 
-            style={{ mixBlendMode: 'difference' }}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2, ease: CINEMATIC_EASE, delay: 0.4 }}
+            style={{ mixBlendMode: 'difference', opacity: textOpacity }}
           >
             Somewhere else in mind?
           </motion.h1>
@@ -762,10 +805,7 @@ const CustomSection = () => {
           {/* Central Portrait Image */}
           <motion.div 
             className="w-full max-w-[420px] h-[500px] lg:h-[720px] overflow-hidden z-[1]"
-            initial={{ clipPath: "inset(10% 10% 10% 10%)", opacity: 0 }}
-            whileInView={{ clipPath: "inset(0% 0% 0% 0%)", opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.6, ease: CINEMATIC_EASE }}
+            style={{ clipPath, opacity: imageOpacity }}
           >
             <Image
               src="https://images.pexels.com/photos/28211183/pexels-photo-28211183.jpeg"
@@ -780,7 +820,7 @@ const CustomSection = () => {
         {/* Descriptive Paragraph */}
         <div className="max-w-[800px] text-center mx-auto my-[60px] lg:my-10 z-[3]">
           <motion.p 
-            className="text-sm font-light text-[#888] tracking-[0.3px]"
+            className="block mt-6 text-[#6B6560] text-sm md:text-base"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -798,9 +838,10 @@ const CustomSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: CINEMATIC_EASE, delay: 0.8 }}
         >
-          <button className="bg-[#2c3135] text-white py-[18px] px-[50px] rounded-full text-base font-normal transition-colors hover:bg-[#1a1d1f] border-none cursor-pointer">
-            Personalize Your Path
-          </button>
+          <Link href="/inquiry" className="group relative inline-flex items-center justify-center px-12 py-5 bg-[#2c3135] text-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl">
+            <span className={`relative z-10 text-lg font-medium tracking-wide ${tenorSans.className}`}>Personalize Your Path</span>
+            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </Link>
         </motion.div>
       </div>
     </section>
@@ -809,6 +850,21 @@ const CustomSection = () => {
 
 // Main Page Component
 export default function DestinationPage() {
+  useEffect(() => {
+    const lenis = new Lenis()
+
+    function raf(time: number) {
+      lenis.raf(time)
+      requestAnimationFrame(raf)
+    }
+
+    requestAnimationFrame(raf)
+
+    return () => {
+      lenis.destroy()
+    }
+  }, [])
+
   return (
     <div className="font-['Montserrat'] text-white bg-[#1a1a1a] scroll-smooth">
       <style jsx global>{`
@@ -820,6 +876,28 @@ export default function DestinationPage() {
       <TransportSection />
       <PhilosophySection />
       <CustomSection />
+      
+      <footer className="py-20 px-6 lg:px-[60px] border-t border-gray-200 bg-white">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="flex justify-between items-start mb-16">
+            <div>
+              <h3 className={`text-3xl mb-6 text-[#6B6560] ${tenorSans.className}`}>Vyan Abimanyu</h3>
+              <p className="text-[#6B6560]">Bali, Indonesia</p>
+            </div>
+            <div className="max-w-[400px] text-[#6B6560] leading-relaxed text-right">
+              <p>Your local companion for a deeper connection. Dedicated to exploring the soul of Bali through the eyes of a friend, where every curated moment is anchored in safety, authenticity, and heart.</p>
+            </div>
+          </div>
+          <div className="flex justify-between items-center text-gray-500">
+             <p>&copy; 2026 Web by <Link href="https://flaat.studio" target="_blank" rel="noopener noreferrer" className='font-semibold hover:text-[#2D2623] transition-colors'>Flaat Studio</Link></p>
+            <div className="flex gap-6">
+              <Instagram className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
+              <Facebook className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
+              <Twitter className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
