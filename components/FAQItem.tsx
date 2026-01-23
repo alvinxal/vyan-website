@@ -19,13 +19,10 @@ interface FAQItemProps {
 
 export default function FAQItem({ faq, index, isOpen, onToggle }: FAQItemProps) {
   return (
-    <motion.div 
-      className="faq-item border-b border-[#E5E0D8]"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-    >
+    <div className="faq-item-container">
+      <motion.div 
+        className="faq-item border-b border-[#E5E0D8]"
+      >
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between gap-8 text-left py-6 group"
@@ -59,14 +56,15 @@ export default function FAQItem({ faq, index, isOpen, onToggle }: FAQItemProps) 
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{
-              height: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
-              opacity: { duration: 0.3 }
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ 
+              duration: 0.3, 
+              ease: "easeOut",
+              height: { duration: 0.3, ease: "easeOut" }
             }}
-            style={{ overflow: "hidden" }}
+            style={{ overflow: 'hidden' }}
           >
             <p className={`text-[#6B6560] leading-relaxed text-base max-w-[90%] pb-8 ${montserrat.className}`}>
               {faq.answer}
@@ -74,6 +72,7 @@ export default function FAQItem({ faq, index, isOpen, onToggle }: FAQItemProps) 
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+      </motion.div>
+    </div>
   )
 }

@@ -89,10 +89,14 @@ export default function AlternativePage() {
   const [selectedLocation, setSelectedLocation] = useState<typeof MAP_HOTSPOTS[0] | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [openFaqId, setOpenFaqId] = useState<number | null>(null)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileView, setIsMobileView] = useState(false)
+  const [mobileSlideIndex, setMobileSlideIndex] = useState(0)
+  const mobileGuideContainerRef = useRef<HTMLDivElement>(null)
 
-  // Custom cursor for map section
+  // Custom cursor for map section (disable on mobile)
   useEffect(() => {
-    if (!cursorRef.current || !mapContainerRef.current) return
+    if (!cursorRef.current || !mapContainerRef.current || window.innerWidth < 768) return
 
     const cursor = cursorRef.current
     const xTo = gsap.quickTo(cursor, "x", { duration: 0.15, ease: "power3" })
@@ -242,9 +246,59 @@ export default function AlternativePage() {
     return () => ctx.revert()
   }, [])
 
-  // Guide Section Horizontal Scroll Animation
+  // Check for mobile view
   useEffect(() => {
-    if (isLoading) return
+    const checkMobile = () => {
+      setIsMobileView(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Mobile Guide Slide Animations
+  useEffect(() => {
+    if (isLoading || !isMobileView) return
+
+    const ctx = gsap.context(() => {
+      const slides = gsap.utils.toArray('.guide-slide-mobile') as HTMLElement[]
+
+      // Animate each slide when it enters viewport
+      slides.forEach((slide, index) => {
+        gsap.fromTo(slide,
+          {
+            scale: 0.85,
+            opacity: 0
+          },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: slide,
+              start: 'left 85%',
+              end: 'left 15%',
+              toggleActions: 'play none none reverse',
+              onEnter: () => {
+                setMobileSlideIndex(index)
+              },
+              onEnterBack: () => {
+                setMobileSlideIndex(index)
+              }
+            }
+          }
+        )
+      })
+    })
+
+    return () => ctx.revert()
+  }, [isMobileView])
+
+  // Guide Section Horizontal Scroll Animation (Desktop only)
+  useEffect(() => {
+    if (isLoading || isMobileView) return
 
     const ctx = gsap.context(() => {
       const slides = gsap.utils.toArray('.guide-slide') as HTMLElement[]
@@ -489,16 +543,19 @@ export default function AlternativePage() {
     return () => ctx.revert()
   }, [])
 
-  // FAQ Section Animation
+  // FAQ Section Animation - HEADER FIRST, THEN ITEMS SEQUENTIALLY
   useEffect(() => {
     if (isLoading) return
 
     const ctx = gsap.context(() => {
-      gsap.from('.faq-subtitle', {
+      // Set initial states for FAQ header and item containers
+      gsap.set(['.faq-subtitle', '.faq-title', '.faq-item-container'], {
         y: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
+        opacity: 0
+      })
+
+      // Create timeline for sequential entrance
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: '.faq-section',
           start: 'top 70%',
@@ -506,17 +563,28 @@ export default function AlternativePage() {
         }
       })
 
-      gsap.from('.faq-title', {
-        y: 40,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.faq-section',
-          start: 'top 70%',
-          toggleActions: 'play none none reverse'
-        }
+      // Header appears first
+      tl.to('.faq-subtitle', {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        ease: 'power3.out'
       })
+      .to('.faq-title', {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        ease: 'power3.out'
+      }, '-=0.4') // Slight overlap for smoother flow
+      
+      // FAQ items appear after header
+      tl.to('.faq-item-container', {
+        y: 0,
+        opacity: 1,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'power3.out'
+      }, '+=0.2') // Small delay after header
     })
 
     return () => ctx.revert()
@@ -526,15 +594,17 @@ export default function AlternativePage() {
   return (
     <div className={`${montserrat.className} bg-[#F8F5F0] text-white leading-relaxed overflow-x-hidden bg-grain`}>
       {/* Header */}
-      <motion.header 
+      <motion.header
         className="absolute top-0 w-full flex justify-between items-center px-6 lg:px-[60px] py-10 z-20"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
       >
-       <Link href="/" className={`text-2xl font-normal tracking-wide text-white ${tenorSans.className}`}>
+       <Link href="/" className={`text-xl md:text-2xl font-normal tracking-wide text-white ${tenorSans.className}`}>
           Vyan Abimanyu
         </Link>
+
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex gap-10">
           {['Destination', 'Inquiry'].map((item, index) => (
             <motion.a
@@ -549,13 +619,82 @@ export default function AlternativePage() {
             </motion.a>
           ))}
         </nav>
+
+        {/* Mobile Hamburger Menu */}
+        <button
+          className="md:hidden text-white p-2"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          <div className="w-6 h-6 relative">
+            <span className={`block absolute h-0.5 w-6 bg-white transform transition duration-300 ease-in-out ${isMobileMenuOpen ? 'rotate-45 translate-y-0' : '-translate-y-2'}`}></span>
+            <span className={`block absolute h-0.5 w-6 bg-white transform transition duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-0' : 'opacity-100'} translate-y-0`}></span>
+            <span className={`block absolute h-0.5 w-6 bg-white transform transition duration-300 ease-in-out ${isMobileMenuOpen ? '-rotate-45 translate-y-0' : 'translate-y-2'}`}></span>
+          </div>
+        </button>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              className="fixed inset-0 bg-black/95 backdrop-blur-sm z-30 md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {/* Close Button */}
+              <button
+                className="absolute top-6 right-6 text-white p-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Close menu"
+              >
+                <svg 
+                  viewBox="0 0 24 24" 
+                  className="w-6 h-6"
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+
+              <motion.nav
+                className="flex flex-col items-center justify-center h-full space-y-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+              >
+                {['Destination', 'Inquiry'].map((item, index) => (
+                  <motion.a
+                    key={item}
+                    href={item === 'Inquiry' ? '/inquiry' : '/destination'}
+                    className={`text-white text-lg font-normal hover:opacity-70 transition-opacity ${tenorSans.className}`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.1 + index * 0.1 }}
+                  >
+                    {item}
+                  </motion.a>
+                ))}
+              </motion.nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.header>
 
       {/* Hero Section */}
       <section className="relative h-screen min-h-[600px] flex items-center justify-center text-center z-0 mb-20">
         <div className="max-w-6xl mx-auto px-6 z-10 text-white">
-          <h1 className={`text-6xl leading-tight mb-6 mx-auto ${tenorSans.className}`}>
-            <motion.span 
+          <h1 className={`text-4xl md:text-6xl leading-tight mb-6 mx-auto ${tenorSans.className}`}>
+            <motion.span
               className="hero-heading-line-1 block"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -563,7 +702,7 @@ export default function AlternativePage() {
             >
               Experience the Soul of Bali,
             </motion.span>
-            <motion.span 
+            <motion.span
               className="hero-heading-line-2 block"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -572,38 +711,38 @@ export default function AlternativePage() {
               Not Just the Sights
             </motion.span>
           </h1>
-          <motion.p 
-            className="hero-paragraph max-w-4xl mx-auto mb-10"
+          <motion.p
+            className="hero-paragraph max-w-4xl mx-auto mb-10 text-sm md:text-base"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
           >
-            Custom tailored private tours with a local friend <br /> who knows every hidden corner of the island.
+            Custom tailored private tours with a local friend <br className="hidden md:block" /> who knows every hidden corner of the island.
           </motion.p>
-          <motion.a 
-            href="#" 
-            className="hero-button group relative inline-flex items-center justify-center px-12 py-5 border border-white rounded-full overflow-hidden"
+          <motion.a
+            href="#"
+            className="hero-button group relative inline-flex items-center justify-center px-8 md:px-12 py-4 md:py-5 border border-white rounded-full overflow-hidden"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1, ease: "easeOut" }}
-            whileHover={{ 
+            whileHover={{
               scale: 1.05,
               transition: { duration: 0.3, ease: "easeOut" }
             }}
-            whileTap={{ 
+            whileTap={{
               scale: 0.95,
               transition: { duration: 0.15, ease: "easeOut" }
             }}
           >
-            <motion.span 
-              className={`relative z-10 text-lg font-medium tracking-wide ${tenorSans.className}`}
+            <motion.span
+              className={`relative z-10 text-base md:text-lg font-medium tracking-wide ${tenorSans.className}`}
               initial={{ color: "#ffffff" }}
               whileHover={{ color: "#000000" }}
               transition={{ duration: 0.3 }}
             >
               Chat With Vyan
             </motion.span>
-            <motion.div 
+            <motion.div
               className="absolute inset-0 bg-white"
               initial={{ opacity: 0 }}
               whileHover={{ opacity: 1 }}
@@ -649,75 +788,168 @@ export default function AlternativePage() {
 
       {/* Guide Section */}
       <section ref={guideSectionRef} className="pt-12 pb-20 overflow-hidden min-h-screen flex flex-col justify-start relative">
-        {/* Text Content within centered container */}
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-[60px] relative z-20 w-full">
-          <div className="flex-shrink-0">
-            <div className="mb-12 flex items-start justify-between">
-              <div>
-                <span className="guide-subtitle block mb-4 text-[#6B6560] text-left opacity-0">Meet Your Guide</span>
-                <h2 className={`text-[64px] leading-tight text-left text-[#30373C] ${tenorSans.className} w-[600px]`}>
-                  <span className="guide-title-line-1 block opacity-0">A Local Journey</span>
-                  <span className="guide-title-line-2 block opacity-0">With Me</span>
-                </h2>
-              </div>
-              
-              {/* Progress Indicator - Slide Counter */}
-              <div className="flex items-center gap-2 mt-2">
-                <span className="text-sm font-semibold text-[#30373C] tabular-nums">
-                  {currentSlide}/{GUIDE_STEPS.length - 1}
-                </span>
+        
+        {/* Desktop: GSAP Horizontal Scroll Animation */}
+        {!isMobileView && (
+          <>
+            {/* Text Content within centered container */}
+            <div className="max-w-[1400px] mx-auto px-6 lg:px-[60px] relative z-20 w-full">
+              <div className="flex-shrink-0">
+                <div className="mb-12 flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-0">
+                  <div>
+                    <span className="guide-subtitle block mb-4 text-[#6B6560] text-left opacity-0">Meet Your Guide</span>
+                    <h2 className={`text-4xl md:text-[64px] leading-tight text-left text-[#30373C] ${tenorSans.className} md:w-[600px]`}>
+                      <span className="guide-title-line-1 block opacity-0">A Local Journey</span>
+                      <span className="guide-title-line-2 block opacity-0">With Me</span>
+                    </h2>
+                  </div>
+
+                  {/* Progress Indicator - Slide Counter */}
+                  <div className="flex items-center gap-2 md:mt-2">
+                    <span className="text-sm font-semibold text-[#30373C] tabular-nums">
+                      {currentSlide}/{GUIDE_STEPS.length - 1}
+                    </span>
+                  </div>
+                </div>
+                {/* Dynamic Text Area */}
+                <div className="relative h-[120px] max-w-[320px] md:max-w-none">
+                  {GUIDE_STEPS.map((step) => (
+                    <div key={step.id} className="guide-text absolute top-0 left-0 opacity-0 translate-y-4">
+                      {step.location && <div className={`text-lg md:text-xl mb-2 text-[#30373C] ${tenorSans.className}`}>{step.location}</div>}
+                      {step.description && <p className="text-[#6B6560] leading-relaxed text-sm md:text-base md:w-[340px]">{step.description}</p>}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-            {/* Dynamic Text Area */}
-            <div className="relative h-[120px] max-w-[320px]">
+
+            {/* Image Row with absolute positioning */}
+            <div ref={guideTrackRef} className="guide-track flex gap-6 absolute top-[40%] translate-y-[-20%] items-start left-0">
               {GUIDE_STEPS.map((step) => (
-                <div key={step.id} className="guide-text absolute top-0 left-0 opacity-0 translate-y-4">
-                   {step.location && <div className={`text-xl mb-2 text-[#30373C] ${tenorSans.className}`}>{step.location}</div>}
-                   {step.description && <p className="text-[#6B6560] leading-relaxed text-sm">{step.description}</p>}
+                <div
+                  key={step.id}
+                  className={`guide-slide flex-shrink-0 w-[200px] h-[240px] rounded-sm overflow-hidden relative mt-[310px] origin-bottom opacity-50 ${step.image ? 'bg-black/5 transition-transform duration-300' : ''}`}
+                >
+                  {step.image && (
+                    <>
+                      <Image
+                        src={step.image}
+                        alt={step.location}
+                        width={440}
+                        height={550}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/10 transition-opacity"></div>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
-          </div>
-        </div>
+          </>
+        )}
 
-        {/* Image Row with absolute positioning */}
-        <div ref={guideTrackRef} className="guide-track flex gap-6 absolute top-[40%] translate-y-[-20%] items-start left-0">
-          {GUIDE_STEPS.map((step) => (
-            <div
-              key={step.id}
-              className={`guide-slide flex-shrink-0 w-[200px] h-[240px] rounded-sm overflow-hidden relative mt-[310px] origin-bottom opacity-50 ${step.image ? 'bg-black/5 transition-transform duration-300' : ''}`}
-            >
-              {step.image && (
-                <>
-                  <Image
-                    src={step.image}
-                    alt={step.location}
-                    width={440}
-                    height={550}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/10 transition-opacity"></div>
-                </>
-              )}
+        {/* Mobile: Horizontal Scrollable Layout */}
+        {isMobileView && (
+          <div className="max-w-[1400px] mx-auto px-6 lg:px-[60px] relative z-20 w-full">
+            <div className="mb-8">
+              <span className="guide-subtitle block mb-4 text-[#6B6560] text-sm uppercase tracking-widest font-medium">Meet Your Guide</span>
+              <h2 className={`text-4xl leading-tight text-[#30373C] ${tenorSans.className}`}>
+                A Local Journey
+                <br />
+                With Me
+              </h2>
             </div>
-          ))}
-        </div>
+
+            {/* Horizontal Scrollable Container */}
+            <div className="relative overflow-x-auto overflow-y-hidden">
+              <div className="flex gap-4 px-4" style={{ width: `${GUIDE_STEPS.slice(1).length * 100}%` }}>
+                {GUIDE_STEPS.slice(1).map((step, index) => (
+                  <div 
+                    key={step.id} 
+                    className={`guide-slide-mobile flex-shrink-0 w-full opacity-0 scale-80`}
+                    style={{ width: '85%' }}
+                  >
+                    <div className="flex flex-col gap-4 items-start">
+                      {/* Mobile Image */}
+                      {step.image && (
+                        <div className="relative w-full aspect-[4/3] rounded-sm overflow-hidden bg-black/5">
+                          <Image
+                            src={step.image}
+                            alt={step.location || `Slide ${index + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 85vw"
+                          />
+                          <div className="absolute inset-0 bg-black/10 transition-opacity"></div>
+                        </div>
+                      )}
+
+                      {/* Mobile Text */}
+                      <div>
+                        {step.location && (
+                          <div className={`text-xl mb-3 text-[#30373C] ${tenorSans.className}`}>
+                            {step.location}
+                          </div>
+                        )}
+                        {step.description && (
+                          <p className="text-[#6B6560] leading-relaxed text-base">
+                            {step.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Pagination Dots */}
+            <div className="flex justify-center gap-2 mt-6">
+              {GUIDE_STEPS.slice(1).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    const container = document.querySelector('.overflow-x-auto')
+                    if (container) {
+                      const targetSlide = document.querySelectorAll('.guide-slide-mobile')[index]
+                      targetSlide.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+                    }
+                  }}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    mobileSlideIndex === index 
+                      ? 'bg-[#30373C] w-8' 
+                      : 'bg-[#30373C]/30 hover:bg-[#30373C]/50'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Tours Section */}
-      <section ref={mapSectionRef} className="py-28 mb-20">
+      <section ref={mapSectionRef} className="py-20 md:py-28 mb-20">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-[60px] relative">
-          <div className="mb-12 flex justify-between items-start">
-            <h2 className={`tours-title text-[64px] leading-tight max-w-[400px]  text-[#30373C] ${tenorSans.className} opacity-0`}>
+          <div className="mb-12 flex flex-col md:flex-row md:justify-between md:items-start gap-4 md:gap-0">
+            <h2 className={`tours-title text-4xl md:text-[64px] leading-tight max-w-[400px] text-[#30373C] ${tenorSans.className} opacity-0`}>
               Explore Our Tour
             </h2>
-            
+
             {/* Instruction Text - Top Right */}
             <div className="flex items-center gap-3 opacity-40 mt-4 hidden md:flex">
               <span className="text-[10px] uppercase tracking-[0.2em] text-[#30373C] font-bold text-right">
                 Hover or click on a marker <br/>to explore each stop
               </span>
               <div className="w-8 h-[1px] bg-[#30373C]"></div>
+            </div>
+
+            {/* Mobile Instruction Text */}
+            <div className="flex items-center gap-3 opacity-60 md:hidden">
+              <span className="text-xs uppercase tracking-[0.15em] text-[#30373C] font-bold">
+                Tap markers to explore
+              </span>
+              <div className="w-6 h-[1px] bg-[#30373C]"></div>
             </div>
           </div>
           {/* Interactive Map Section */}
@@ -843,27 +1075,27 @@ export default function AlternativePage() {
 
 
 
-          <div className="mt-40 flex flex-col md:flex-row justify-between items-end gap-12 md:gap-0 relative">
+          <div className="mt-40 flex flex-col md:flex-row justify-start items-start gap-12 md:gap-8 relative">
             {/* Link anchored left/bottom */}
             <div className="md:w-1/4">
               <Link href="/destination" className="group inline-flex items-center gap-2">
                 <span className={`text-lg text-[#30373C] ${tenorSans.className} border-b border-[#30373C] pb-0.5`}>
                   Discover All Spots
                 </span>
-                <motion.span 
+                <motion.span
                   initial={{ x: 0, scale: 1 }}
                   whileHover={{ x: 5, scale: 1.1 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <span className="text-lg text-[#30373C] ${tenorSans.className} pb-0.5">→</span>
+                  <span className={`text-lg text-[#30373C] ${tenorSans.className} pb-0.5`}>→</span>
                 </motion.span>
               </Link>
             </div>
 
-            {/* Paragraph offset to the right */}
-            <div className="md:w-2/3 md:pl-20">
-              <p className="text-[#30373C] text-base md:text-lg leading-[1.8] font-light text-right">
-                I firmly believe that no two travelers are the same, and your journey should be as unique as your own fingerprint. While I provide meticulously curated experiences and insider recommendations, the final itinerary always remains firmly in your hands. 
+            {/* Paragraph left-aligned */}
+            <div className="md:w-2/3">
+              <p className="text-[#30373C] text-base md:text-lg leading-[1.8] font-light text-left">
+                I firmly believe that no two travelers are the same, and your journey should be as unique as your own fingerprint. While I provide meticulously curated experiences and insider recommendations, the final itinerary always remains firmly in your hands.
                 <span className="block mt-6 text-[#6B6560] text-sm md:text-base">
                   I understand that the best travel moments often happen in the unplanned gaps.
                 </span>
@@ -874,12 +1106,12 @@ export default function AlternativePage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="faq-section py-32 bg-white relative z-20">
+      <section className="faq-section py-20 md:py-32 bg-white relative z-20">
         <div className="max-w-[800px] mx-auto px-6">
-          <div className="mb-20 text-center">
+          <div className="mb-12 md:mb-20 text-center">
             <span className="faq-subtitle block mb-4 text-[#6B6560] text-sm uppercase tracking-widest font-medium">Common Questions</span>
-            <h2 className={`faq-title text-6xl leading-tight text-[#30373C] ${tenorSans.className}`}>
-              Frequently Asked<br/>Questions
+            <h2 className={`faq-title text-4xl md:text-6xl leading-tight text-[#30373C] ${tenorSans.className}`}>
+              Frequently Asked Questions
             </h2>
           </div>
 
@@ -910,20 +1142,20 @@ export default function AlternativePage() {
         />
         <div className="absolute inset-0 bg-black/40 z-0 will-change-transform" />
         <div className="absolute bottom-0 left-0 w-full h-2/3 bg-gradient-to-t from-[#F8F5F0]/30 to-transparent z-0 will-change-transform" />
-        
+
         <div className="cta-content relative z-10 max-w-4xl mx-auto px-6">
           <div className="p-4">
             <span className="block mb-6 text-sm md:text-base uppercase tracking-[0.3em] font-medium opacity-90 drop-shadow-md">
               Start Your Journey
             </span>
-            <h2 className={`text-6xl mb-8 ${tenorSans.className} leading-tight drop-shadow-lg`}>
-              Ready to See Bali <br/> Through a Local&#39;s Eyes?
+            <h2 className={`text-4xl md:text-6xl mb-8 ${tenorSans.className} leading-tight drop-shadow-lg`}>
+              Ready to See Bali <br className="hidden md:block"/> Through a Local&#39;s Eyes?
             </h2>
-            <p className={`text-base mb-12 opacity-90 leading-relaxed max-w-2xl mx-auto ${montserrat.className} drop-shadow-md`}>
+            <p className={`text-base mb-12 opacity-90 leading-relaxed max-w-2xl mx-auto ${montserrat.className} drop-shadow-md text-sm md:text-base`}>
               Let&#39;s craft a story that belongs only to you. No rushed schedules, just authentic moments and hidden gems.
             </p>
-            <Link href="/inquiry" className="group relative inline-flex items-center justify-center px-12 py-5 bg-[#F8F5F0] text-[#2D2623] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl">
-              <span className={`relative z-10 text-lg font-medium tracking-wide ${tenorSans.className}`}>Let&#39;s Talk</span>
+            <Link href="/inquiry" className="group relative inline-flex items-center justify-center px-8 md:px-12 py-4 md:py-5 bg-[#F8F5F0] text-[#2D2623] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl">
+              <span className={`relative z-10 text-base md:text-lg font-medium tracking-wide ${tenorSans.className}`}>Let&#39;s Talk</span>
               <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
           </div>
@@ -931,19 +1163,19 @@ export default function AlternativePage() {
       </section>
 
       {/* Footer */}
-      <footer ref={footerRef} className="py-20 px-6 lg:px-[60px] border-t border-gray-200">
+      <footer ref={footerRef} className="py-12 md:py-20 px-6 lg:px-[60px] border-t border-gray-200">
         <div className="max-w-[1400px] mx-auto">
-          <div className="footer-content flex justify-between items-start mb-16">
-            <div>
-              <h3 className={`text-3xl mb-6 text-[#6B6560] ${tenorSans.className}`}>Vyan Abimanyu</h3>
-              <p className="text-[#6B6560]">Bali, Indonesia</p>
+          <div className="footer-content flex flex-col items-center gap-8 md:gap-0 mb-12 md:mb-16">
+            <div className="text-center">
+              <h3 className={`text-2xl md:text-3xl mb-6 text-[#6B6560] ${tenorSans.className}`}>Vyan Abimanyu</h3>
+              <p className="text-[#6B6560] text-sm md:text-base">Bali, Indonesia</p>
             </div>
-            <div className="max-w-[400px] text-[#6B6560] leading-relaxed text-right">
-              <p>Your local companion for a deeper connection. Dedicated to exploring the soul of Bali through the eyes of a friend, where every curated moment is anchored in safety, authenticity, and heart.</p>
+            <div className="max-w-[400px] text-[#6B6560] leading-relaxed text-center text-sm md:text-base">
+              <p>Your local companion for a deeper connection. Dedicated to exploring the soul of Bali through eyes of a friend, where every curated moment is anchored in safety, authenticity, and heart.</p>
             </div>
           </div>
-          <div className="footer-content flex justify-between items-center text-gray-500">
-             <p>&copy; 2026 Web by <Link href="https://flaat.studio" target="_blank" rel="noopener noreferrer" className='font-semibold hover:text-[#2D2623] transition-colors'>Flaat Studio</Link></p>
+          <div className="footer-content flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 text-gray-500">
+             <p className="text-sm">&copy; 2026 Web by <Link href="https://flaat.studio" target="_blank" rel="noopener noreferrer" className='font-semibold hover:text-[#2D2623] transition-colors'>Flaat Studio</Link></p>
             <div className="flex gap-6">
               <Instagram className="social-icon w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
               <Facebook className="social-icon w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
@@ -996,27 +1228,27 @@ export default function AlternativePage() {
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-transparent/50 to-transparent" />
 
               {/* Content Container */}
-              <div className="absolute inset-x-0 bottom-0 max-w-[1400px] mx-auto px-6 lg:px-[60px] pb-16 flex items-end justify-between gap-8">
+              <div className="absolute inset-x-0 bottom-0 max-w-[1400px] mx-auto px-6 lg:px-[60px] pb-8 md:pb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-8">
                 {/* Title - Bottom Left */}
                 <motion.div
-                  className="flex-shrink-0 w-[600px]"
+                  className="flex-shrink-0 w-full md:w-[600px]"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
                 >
-                  <h2 className={`text-[64px] leading-tight text-white ${tenorSans.className}`}>
+                  <h2 className={`text-4xl md:text-[64px] leading-tight text-white ${tenorSans.className}`}>
                     {selectedLocation.title}
                   </h2>
                 </motion.div>
 
                 {/* Description - Bottom Right */}
                 <motion.div
-                  className="max-w-[300px] text-right"
+                  className="max-w-full md:max-w-[300px] text-left md:text-right"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.5 }}
                 >
-                  <p className={`text-white/90 text-base leading-relaxed ${montserrat.className}`}>
+                  <p className={`text-white/90 text-base leading-relaxed ${montserrat.className} text-sm md:text-base`}>
                     {selectedLocation.description}
                   </p>
                 </motion.div>
