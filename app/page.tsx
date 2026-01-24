@@ -2,6 +2,7 @@
 import { Tenor_Sans, Montserrat } from 'next/font/google'
 import Image from 'next/image'
 import Link from 'next/link'
+import Header from '@/components/sections/Header'
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
@@ -631,6 +632,7 @@ export default function AlternativePage() {
       }, '+=0.2') // Small delay after header
     })
 
+// ... (inside component body, removing misplaced import)
     return () => ctx.revert()
   }, [])
 
@@ -638,101 +640,7 @@ export default function AlternativePage() {
   return (
     <div className={`${montserrat.className} bg-[#F8F5F0] text-white leading-relaxed overflow-x-hidden bg-grain`}>
       {/* Header */}
-      <motion.header
-        className="absolute top-0 w-full flex justify-between items-center px-6 lg:px-[60px] py-10 z-20"
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-      >
-       <Link href="/" className={`text-xl md:text-2xl font-normal tracking-wide text-white ${tenorSans.className}`}>
-          Vyan Abimanyu
-        </Link>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex gap-10">
-          {['Destination', 'Inquiry'].map((item, index) => (
-            <motion.a
-              key={item}
-              href={item === 'Inquiry' ? '/inquiry' : '/destination'}
-              className="text-white text-sm font-normal hover:opacity-70 transition-opacity"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
-            >
-              {item}
-            </motion.a>
-          ))}
-        </nav>
-
-        {/* Mobile Hamburger Menu */}
-        <button
-          className="md:hidden text-white p-2"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          <div className="w-6 h-6 relative">
-            <span className={`block absolute h-0.5 w-6 bg-white transform transition duration-300 ease-in-out ${isMobileMenuOpen ? 'rotate-45 translate-y-0' : '-translate-y-2'}`}></span>
-            <span className={`block absolute h-0.5 w-6 bg-white transform transition duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-0' : 'opacity-100'} translate-y-0`}></span>
-            <span className={`block absolute h-0.5 w-6 bg-white transform transition duration-300 ease-in-out ${isMobileMenuOpen ? '-rotate-45 translate-y-0' : 'translate-y-2'}`}></span>
-          </div>
-        </button>
-
-        {/* Mobile Menu Overlay */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              className="fixed inset-0 bg-black/90 backdrop-blur-md z-30 md:hidden"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {/* Close Button */}
-              <button
-                className="absolute top-6 right-6 text-white p-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-                aria-label="Close menu"
-              >
-                <svg 
-                  viewBox="0 0 24 24" 
-                  className="w-6 h-6"
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-
-              <motion.nav
-                className="flex flex-col items-center justify-center h-full space-y-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-              >
-                {['Destination', 'Inquiry'].map((item, index) => (
-                  <motion.a
-                    key={item}
-                    href={item === 'Inquiry' ? '/inquiry' : '/destination'}
-                    className={`text-white text-lg font-normal hover:opacity-70 transition-opacity ${tenorSans.className}`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.1 + index * 0.1 }}
-                  >
-                    {item}
-                  </motion.a>
-                ))}
-              </motion.nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.header>
+      <Header variant="transparent" />
 
       {/* Hero Section */}
       <section className="relative h-screen min-h-[600px] flex items-center justify-center text-center z-0 mb-20">
@@ -780,19 +688,13 @@ export default function AlternativePage() {
               transition: { duration: 0.15, ease: "easeOut" }
             }}
           >
-            <motion.span
-              className={`relative z-10 text-base md:text-lg font-medium tracking-wide ${tenorSans.className}`}
-              initial={{ color: "#ffffff" }}
-              whileHover={{ color: "#000000" }}
-              transition={{ duration: 0.3 }}
+            <span
+              className={`relative z-10 text-base md:text-lg font-medium tracking-wide text-white group-hover:text-[#2D2623] transition-colors duration-300 ${tenorSans.className}`}
             >
               Chat With Vyan
-            </motion.span>
-            <motion.div
-              className="absolute inset-0 bg-white"
-              initial={{ opacity: 0 }}
-              whileHover={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
+            </span>
+            <div
+              className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             />
           </motion.a>
         </div>
@@ -908,7 +810,7 @@ export default function AlternativePage() {
             </div>
 
             {/* Horizontal Scrollable Container with Snap */}
-            <div className="relative w-full overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-minimal">
+            <div className="relative w-full overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide">
               <div className="flex px-6 gap-4 w-max">
                 {GUIDE_STEPS.slice(1).map((step, index) => (
                   <div 

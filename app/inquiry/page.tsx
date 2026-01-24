@@ -3,6 +3,7 @@
 import { useState, ChangeEvent, FormEvent, useEffect } from 'react'
 import { Tenor_Sans, Montserrat } from 'next/font/google'
 import Link from 'next/link'
+import Header from '@/components/sections/Header'
 import Lenis from 'lenis'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Instagram, Phone, Mail, Loader2, Calendar, Facebook, Twitter } from 'lucide-react'
@@ -50,36 +51,7 @@ const Toast = ({ message, isVisible, onClose, type = 'success' }: { message: str
 };
 
 // Component: Header
-const Header = () => (
-    <motion.header 
-      className="flex justify-between items-center mb-16 lg:mb-20"
-      initial={{ opacity: 0, y: -30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-    >
-     <Link href="/" className={`text-2xl font-normal tracking-wide text-[#2D2623] ${tenorSans.className}`}>
-        Vyan Abimanyu
-      </Link>
-      <nav className="hidden md:flex gap-10">
-        {['Destination', 'Inquiry'].map((item, index) => (
-          <motion.a
-            key={item}
-            href={item === 'Inquiry' ? '/inquiry' : '/destination'}
-            className="text-[#2D2623] text-sm font-normal hover:opacity-70 transition-opacity"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
-          >
-            {item}
-          </motion.a>
-        ))}
-      </nav>
-      {/* Mobile Menu Icon (Placeholder) */}
-      <div className="md:hidden text-lg text-[#2D2623]">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-      </div>
-    </motion.header>
-);
+// Removed local Header definition in favor of shared component
 
 // Component: Radio Option
 const RadioOption = ({
@@ -383,7 +355,7 @@ export default function InquiryPage() {
       
       <div className="px-6 lg:px-[60px] pb-20 pt-10">
         <div className="max-w-[1400px] mx-auto">
-          <Header />
+          <Header variant="default" />
 
           <main className="flex flex-col lg:flex-row relative justify-between items-start mb-12 gap-12 lg:gap-24">
           {/* Left Column: Content */}
@@ -435,17 +407,17 @@ export default function InquiryPage() {
       {/* Footer */}
       <footer className="py-20 px-6 lg:px-[60px] border-t border-[#2D2623]/10 text-[#6B6560]">
         <div className="max-w-[1400px] mx-auto">
-          <div className="flex justify-between items-start mb-16">
+          <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start mb-16 gap-8 lg:gap-0 text-center lg:text-left">
             <div>
               <h3 className={`text-3xl mb-6 text-[#6B6560] ${tenorSans.className}`}>Vyan Abimanyu</h3>
               <p className="text-[#6B6560]">Bali, Indonesia</p>
             </div>
-            <div className="max-w-[400px] text-[#6B6560] leading-relaxed text-right">
+            <div className="max-w-[400px] text-[#6B6560] leading-relaxed lg:text-right">
               <p>Your local companion for a deeper connection. Dedicated to exploring the soul of Bali through the eyes of a friend, where every curated moment is anchored in safety, authenticity, and heart.</p>
             </div>
           </div>
-          <div className="flex justify-between items-center text-gray-500">
-             <p>&copy; 2026 Web by <Link href="https://flaat.studio" target="_blank" rel="noopener noreferrer" className='font-semibold hover:text-[#2D2623] transition-colors'>Flaat Studio</Link></p>
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-6 lg:gap-0 text-gray-500">
+             <p className="text-center lg:text-left">&copy; 2026 Web by <Link href="https://flaat.studio" target="_blank" rel="noopener noreferrer" className='font-semibold hover:text-[#2D2623] transition-colors'>Flaat Studio</Link></p>
             <div className="flex gap-6">
               <Instagram className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
               <Facebook className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
