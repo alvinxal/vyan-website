@@ -75,3 +75,18 @@ html {
 .perspective-1000 {
   perspective: 1000px;
 }
+
+/* Minimalist Scrollbar for horizontal sections */
+.scrollbar-minimal::-webkit-scrollbar {
+  height: 3px; /* Very thin horizontal bar */
+}
+.scrollbar-minimal::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-minimal::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+.scrollbar-minimal::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
+}

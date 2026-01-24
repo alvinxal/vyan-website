@@ -90,32 +90,43 @@ export default function AlternativePage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [openFaqId, setOpenFaqId] = useState<number | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isMobileView, setIsMobileView] = useState(false)
   const [mobileSlideIndex, setMobileSlideIndex] = useState(0)
   const mobileGuideContainerRef = useRef<HTMLDivElement>(null)
 
   // Custom cursor for map section (disable on mobile)
   useEffect(() => {
-    if (!cursorRef.current || !mapContainerRef.current || window.innerWidth < 768) return
+    // Media query check for cursor
+    const mm = gsap.matchMedia()
+    
+    mm.add("(min-width: 768px)", () => {
+      if (!cursorRef.current || !mapContainerRef.current) return
 
-    const cursor = cursorRef.current
-    const xTo = gsap.quickTo(cursor, "x", { duration: 0.15, ease: "power3" })
-    const yTo = gsap.quickTo(cursor, "y", { duration: 0.15, ease: "power3" })
+      const cursor = cursorRef.current
+      const xTo = gsap.quickTo(cursor, "x", { duration: 0.15, ease: "power3" })
+      const yTo = gsap.quickTo(cursor, "y", { duration: 0.15, ease: "power3" })
 
-    const moveCursor = (e: MouseEvent) => {
-      const rect = mapContainerRef.current?.getBoundingClientRect()
-      if (rect) {
-        const x = e.clientX - rect.left
-        const y = e.clientY - rect.top
-        xTo(x)
-        yTo(y)
+      const moveCursor = (e: MouseEvent) => {
+        const rect = mapContainerRef.current?.getBoundingClientRect()
+        if (rect) {
+          const x = e.clientX - rect.left
+          const y = e.clientY - rect.top
+          xTo(x)
+          yTo(y)
+        }
       }
-    }
 
-    const container = mapContainerRef.current
-    container.addEventListener("mousemove", moveCursor)
-    return () => container.removeEventListener("mousemove", moveCursor)
+      const container = mapContainerRef.current
+      container.addEventListener("mousemove", moveCursor)
+      
+      return () => {
+        container.removeEventListener("mousemove", moveCursor)
+      }
+    })
+
+    return () => mm.revert()
   }, [])
+
+
 
   // Custom "Close" cursor for modal
   useEffect(() => {
@@ -246,20 +257,51 @@ export default function AlternativePage() {
     return () => ctx.revert()
   }, [])
 
-  // Check for mobile view
+  // Mobile Guide Slide Animations
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobileView(window.innerWidth < 768)
-    }
-    
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+    if (isLoading) return
+
+    const mm = gsap.matchMedia()
+
+    mm.add("(max-width: 767px)", () => {
+      const slides = gsap.utils.toArray('.guide-slide-mobile') as HTMLElement[]
+
+      // Animate each slide when it enters viewport
+      slides.forEach((slide, index) => {
+        gsap.fromTo(slide,
+          {
+            scale: 0.85,
+            opacity: 0
+          },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: slide,
+              start: 'left 85%',
+              end: 'left 15%',
+              toggleActions: 'play none none reverse',
+              onEnter: () => {
+                setMobileSlideIndex(index)
+              },
+              onEnterBack: () => {
+                setMobileSlideIndex(index)
+              }
+            }
+          }
+        )
+      })
+    })
+
+    return () => mm.revert()
+  }, [isLoading])
 
   // Mobile Guide Slide Animations
   useEffect(() => {
-    if (isLoading || !isMobileView) return
+  // Mobile Guide Slide Animations (Removed in previous chunk, this is just to clean up if any overlaps occurred, but actually I replaced the whole block 249-297 with the new logic. This chunk in previous tool call covered both. Moving to JSX now.)
+
 
     const ctx = gsap.context(() => {
       const slides = gsap.utils.toArray('.guide-slide-mobile') as HTMLElement[]
@@ -294,13 +336,15 @@ export default function AlternativePage() {
     })
 
     return () => ctx.revert()
-  }, [isMobileView])
+  }, [])
 
   // Guide Section Horizontal Scroll Animation (Desktop only)
   useEffect(() => {
-    if (isLoading || isMobileView) return
+    if (isLoading) return
 
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia()
+    
+    mm.add("(min-width: 768px)", (context) => {
       const slides = gsap.utils.toArray('.guide-slide') as HTMLElement[]
       const texts = gsap.utils.toArray('.guide-text') as HTMLElement[]
       const track = guideTrackRef.current
@@ -415,10 +459,10 @@ export default function AlternativePage() {
         .to(texts[nextI], { opacity: 1, y: 0, duration: 0.5 }, startTime + 1)
       })
 
-    }, guideSectionRef)
+    })
 
-    return () => ctx.revert()
-  }, [])
+    return () => mm.revert()
+  }, [isLoading])
 
   // Tours Section Text Entrance Animation
   useEffect(() => {
@@ -637,7 +681,7 @@ export default function AlternativePage() {
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
-              className="fixed inset-0 bg-black/95 backdrop-blur-sm z-30 md:hidden"
+              className="fixed inset-0 bg-black/90 backdrop-blur-md z-30 md:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -720,7 +764,9 @@ export default function AlternativePage() {
             Custom tailored private tours with a local friend <br className="hidden md:block" /> who knows every hidden corner of the island.
           </motion.p>
           <motion.a
-            href="#"
+            href="https://wa.me/6281234567890?text=Hi%20Vyan,%20I'd%20like%20to%20inquire%20about%20a%20tour."
+            target="_blank"
+            rel="noopener noreferrer"
             className="hero-button group relative inline-flex items-center justify-center px-8 md:px-12 py-4 md:py-5 border border-white rounded-full overflow-hidden"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -780,6 +826,7 @@ export default function AlternativePage() {
             loop 
             muted 
             playsInline 
+            poster="/nusa-penida.webp"
             preload="metadata" 
           />
           <div className="absolute inset-0 bg-black/40 will-change-transform" />
@@ -790,68 +837,68 @@ export default function AlternativePage() {
       <section ref={guideSectionRef} className="pt-12 pb-20 overflow-hidden min-h-screen flex flex-col justify-start relative">
         
         {/* Desktop: GSAP Horizontal Scroll Animation */}
-        {!isMobileView && (
-          <>
-            {/* Text Content within centered container */}
-            <div className="max-w-[1400px] mx-auto px-6 lg:px-[60px] relative z-20 w-full">
-              <div className="flex-shrink-0">
-                <div className="mb-12 flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-0">
-                  <div>
-                    <span className="guide-subtitle block mb-4 text-[#6B6560] text-left opacity-0">Meet Your Guide</span>
-                    <h2 className={`text-4xl md:text-[64px] leading-tight text-left text-[#30373C] ${tenorSans.className} md:w-[600px]`}>
-                      <span className="guide-title-line-1 block opacity-0">A Local Journey</span>
-                      <span className="guide-title-line-2 block opacity-0">With Me</span>
-                    </h2>
-                  </div>
-
-                  {/* Progress Indicator - Slide Counter */}
-                  <div className="flex items-center gap-2 md:mt-2">
-                    <span className="text-sm font-semibold text-[#30373C] tabular-nums">
-                      {currentSlide}/{GUIDE_STEPS.length - 1}
-                    </span>
-                  </div>
+        <div className="hidden md:block">
+          {/* Text Content within centered container */}
+          <div className="max-w-[1400px] mx-auto px-6 lg:px-[60px] relative z-20 w-full">
+            <div className="flex-shrink-0">
+              <div className="mb-12 flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-0">
+                <div>
+                  <span className="guide-subtitle block mb-4 text-[#6B6560] text-left opacity-0">Meet Your Guide</span>
+                  <h2 className={`text-4xl md:text-[64px] leading-tight text-left text-[#30373C] ${tenorSans.className} md:w-[600px]`}>
+                    <span className="guide-title-line-1 block opacity-0">A Local Journey</span>
+                    <span className="guide-title-line-2 block opacity-0">With Me</span>
+                  </h2>
                 </div>
-                {/* Dynamic Text Area */}
-                <div className="relative h-[120px] max-w-[320px] md:max-w-none">
-                  {GUIDE_STEPS.map((step) => (
-                    <div key={step.id} className="guide-text absolute top-0 left-0 opacity-0 translate-y-4">
-                      {step.location && <div className={`text-lg md:text-xl mb-2 text-[#30373C] ${tenorSans.className}`}>{step.location}</div>}
-                      {step.description && <p className="text-[#6B6560] leading-relaxed text-sm md:text-base md:w-[340px]">{step.description}</p>}
-                    </div>
-                  ))}
+
+                {/* Progress Indicator - Slide Counter */}
+                <div className="flex items-center gap-2 md:mt-2">
+                  <span className="text-sm font-semibold text-[#30373C] tabular-nums">
+                    {currentSlide}/{GUIDE_STEPS.length - 1}
+                  </span>
                 </div>
               </div>
+              {/* Dynamic Text Area */}
+              <div className="relative h-[120px] max-w-[320px] md:max-w-none">
+                {GUIDE_STEPS.map((step) => (
+                  <div key={step.id} className="guide-text absolute top-0 left-0 opacity-0 translate-y-4">
+                    {step.location && <div className={`text-lg md:text-xl mb-2 text-[#30373C] ${tenorSans.className}`}>{step.location}</div>}
+                    {step.description && <p className="text-[#6B6560] leading-relaxed text-sm md:text-base md:w-[340px]">{step.description}</p>}
+                  </div>
+                ))}
+              </div>
             </div>
+          </div>
 
-            {/* Image Row with absolute positioning */}
-            <div ref={guideTrackRef} className="guide-track flex gap-6 absolute top-[40%] translate-y-[-20%] items-start left-0">
-              {GUIDE_STEPS.map((step) => (
-                <div
-                  key={step.id}
-                  className={`guide-slide flex-shrink-0 w-[200px] h-[240px] rounded-sm overflow-hidden relative mt-[310px] origin-bottom opacity-50 ${step.image ? 'bg-black/5 transition-transform duration-300' : ''}`}
-                >
-                  {step.image && (
-                    <>
-                      <Image
-                        src={step.image}
-                        alt={step.location}
-                        width={440}
-                        height={550}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/10 transition-opacity"></div>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-          </>
-        )}
+          {/* Image Row with absolute positioning */}
+          <div ref={guideTrackRef} className="guide-track flex gap-6 absolute top-[40%] translate-y-[-20%] items-start left-0">
+            {GUIDE_STEPS.map((step) => (
+              <div
+                key={step.id}
+                className={`guide-slide flex-shrink-0 w-[200px] h-[240px] rounded-sm overflow-hidden relative mt-[310px] origin-bottom opacity-50 ${step.image ? 'bg-black/5 transition-transform duration-300' : ''}`}
+              >
+                {step.image && (
+                  <>
+                    <Image
+                      src={step.image}
+                      alt={step.location}
+                      width={440}
+                      height={550}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/10 transition-opacity"></div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Mobile: Horizontal Scrollable Layout */}
-        {isMobileView && (
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-[60px] relative z-20 w-full">
-            <div className="mb-8">
+        {/* Mobile: Horizontal Scrollable Layout */}
+        {/* Mobile: Horizontal Scrollable Layout */}
+        <div className="block md:hidden">
+          <div className="relative z-20 w-full">
+            <div className="px-6 mb-4">
               <span className="guide-subtitle block mb-4 text-[#6B6560] text-sm uppercase tracking-widest font-medium">Meet Your Guide</span>
               <h2 className={`text-4xl leading-tight text-[#30373C] ${tenorSans.className}`}>
                 A Local Journey
@@ -860,19 +907,18 @@ export default function AlternativePage() {
               </h2>
             </div>
 
-            {/* Horizontal Scrollable Container */}
-            <div className="relative overflow-x-auto overflow-y-hidden">
-              <div className="flex gap-4 px-4" style={{ width: `${GUIDE_STEPS.slice(1).length * 100}%` }}>
+            {/* Horizontal Scrollable Container with Snap */}
+            <div className="relative w-full overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-minimal">
+              <div className="flex px-6 gap-4 w-max">
                 {GUIDE_STEPS.slice(1).map((step, index) => (
                   <div 
                     key={step.id} 
-                    className={`guide-slide-mobile flex-shrink-0 w-full opacity-0 scale-80`}
-                    style={{ width: '85%' }}
+                    className="flex-shrink-0 w-[85vw] snap-center guide-slide-mobile"
                   >
                     <div className="flex flex-col gap-4 items-start">
                       {/* Mobile Image */}
                       {step.image && (
-                        <div className="relative w-full aspect-[4/3] rounded-sm overflow-hidden bg-black/5">
+                        <div className="relative w-full aspect-[4/5] rounded-sm overflow-hidden bg-black/5 shadow-sm">
                           <Image
                             src={step.image}
                             alt={step.location || `Slide ${index + 1}`}
@@ -880,19 +926,19 @@ export default function AlternativePage() {
                             className="object-cover"
                             sizes="(max-width: 768px) 85vw"
                           />
-                          <div className="absolute inset-0 bg-black/10 transition-opacity"></div>
+                          <div className="absolute inset-0 bg-black/10"></div>
                         </div>
                       )}
 
                       {/* Mobile Text */}
-                      <div>
+                      <div className="pr-4">
                         {step.location && (
-                          <div className={`text-xl mb-3 text-[#30373C] ${tenorSans.className}`}>
+                          <div className={`text-xl mb-2 text-[#30373C] ${tenorSans.className}`}>
                             {step.location}
                           </div>
                         )}
                         {step.description && (
-                          <p className="text-[#6B6560] leading-relaxed text-base">
+                          <p className="text-[#6B6560] leading-relaxed text-sm">
                             {step.description}
                           </p>
                         )}
@@ -900,32 +946,12 @@ export default function AlternativePage() {
                     </div>
                   </div>
                 ))}
+                {/* Spacer for end of scroll */}
+                <div className="w-2 flex-shrink-0"></div>
               </div>
             </div>
-
-            {/* Pagination Dots */}
-            <div className="flex justify-center gap-2 mt-6">
-              {GUIDE_STEPS.slice(1).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    const container = document.querySelector('.overflow-x-auto')
-                    if (container) {
-                      const targetSlide = document.querySelectorAll('.guide-slide-mobile')[index]
-                      targetSlide.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
-                    }
-                  }}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    mobileSlideIndex === index 
-                      ? 'bg-[#30373C] w-8' 
-                      : 'bg-[#30373C]/30 hover:bg-[#30373C]/50'
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
           </div>
-        )}
+        </div>
       </section>
 
       {/* Tours Section */}
