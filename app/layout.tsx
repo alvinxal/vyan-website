@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "Vyan Abimanyu - Tour Guide",
   description: "Tour Guide",
   icons: {
-    icon: "/favicon.png",
+    icon: "/favicon.ico",
   },
 };
 

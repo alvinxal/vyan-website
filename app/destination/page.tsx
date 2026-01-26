@@ -225,10 +225,10 @@ const HeroSection = () => {
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-4 h-4 md:w-2 md:h-2 rounded-full transition-all duration-300 ${
+            className={`h-4 md:h-2 rounded-full transition-all duration-300 ${
               currentSlide === index 
-                ? 'bg-white w-16 md:w-8' 
-                : 'bg-white/70 hover:bg-white/90'
+                ? 'bg-white w-12 md:w-6' 
+                : 'bg-white/70 hover:bg-white/90 w-4 md:w-2'
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />
@@ -335,35 +335,46 @@ const GallerySection = () => {
           ))}
         </div>
 
-        <div className="flex flex-col lg:flex-row lg:justify-between gap-8 mt-10">
-          <motion.button 
-            className="group inline-flex items-center gap-2 bg-transparent border-none cursor-pointer p-0"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: CINEMATIC_EASE, delay: 0.4 }}
-          >
-            <span className={`text-lg text-[#30373C] ${tenorSans.className} border-b border-[#30373C] pb-0.5`}>
-              Plan Your Trip
-            </span>
-            <motion.span 
-              initial={{ x: 0, scale: 1 }}
-              whileHover={{ x: 5, scale: 1.1 }}
-              transition={{ duration: 0.3 }}
-              className="text-[#30373C] text-lg"
+        <div className="flex flex-col md:flex-row justify-start items-start gap-12 md:gap-8 relative mt-20">
+          <div className="md:w-1/4">
+            <motion.button 
+              className="group inline-flex items-center gap-2 bg-transparent border-none cursor-pointer p-0"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, ease: CINEMATIC_EASE, delay: 0.4 }}
             >
-              →
-            </motion.span>
-          </motion.button>
-          <motion.p 
-            className="max-w-[400px] text-[#30373C] text-base md:text-lg leading-[1.8] font-light"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: CINEMATIC_EASE, delay: 0.6 }}
-          >
-            We've chosen some of Bali's most amazing landscapes for those who want to see more than just the usual spots
-          </motion.p>
+              <span className={`text-lg text-[#30373C] ${tenorSans.className} border-b border-[#30373C] pb-0.5`}>
+                Plan Your Trip
+              </span>
+              <span 
+                className={`text-lg text-[#30373C] ${tenorSans.className} pb-0.5 transition-transform duration-300 group-hover:translate-x-1`}
+              >
+                →
+              </span>
+            </motion.button>
+          </div>
+
+          <div className="md:w-2/3">
+            <motion.p 
+              className="text-[#30373C] text-base md:text-lg leading-[1.8] font-light text-left"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, ease: CINEMATIC_EASE, delay: 0.6 }}
+            >
+              We’ve gathered some of Bali’s most breathtaking places. Not just the famous spots but the quiet corners where time slows down and magic happens.
+              <span className="block mt-6">
+                Imagine misty highland trails above Lake Batur. Secret beaches known only to locals. Temple gates hidden behind jungle vines. Village cafés where the coffee is strong and the stories are even stronger.
+              </span>
+              <span className="block mt-6">
+                This isn’t about ticking off landmarks. It’s about building a trip that feels like you. Slow. Curious. Full of surprises.
+              </span>
+              <span className="block mt-6 text-[#6B6560] text-sm md:text-base">
+                Let’s start planning. I’ll bring the local insight. You bring your vibe.
+              </span>
+            </motion.p>
+          </div>
         </div>
       </div>
     </section>
@@ -421,7 +432,7 @@ const CustomSection = () => {
   const textOpacity = useTransform(scrollYProgress, [0.9, 1], [0, 1])
 
   return (
-    <section ref={sectionRef} id="custom" className="bg-white text-[#333] py-[60px] px-6 lg:px-10 min-h-screen flex flex-col relative overflow-hidden">
+    <section ref={sectionRef} id="custom" className="bg-white text-[#333] pt-24 pb-48 px-6 lg:px-10 min-h-screen flex flex-col relative overflow-hidden">
       <div className="max-w-[1400px] mx-auto w-full">
         <main className="flex flex-col items-center relative -mt-5">
           {/* Large Title overlaying image */}
@@ -448,7 +459,7 @@ const CustomSection = () => {
         </main>
 
         {/* Descriptive Paragraph */}
-        <div className="max-w-[800px] text-center mx-auto my-[60px] lg:my-10 z-[3]">
+        <div className="max-w-[400px] text-center mx-auto my-[60px] lg:my-10 z-[3]">
           <motion.p 
             className="block mt-6 text-[#6B6560] text-sm md:text-base"
             initial={{ opacity: 0, y: 20 }}
@@ -456,7 +467,9 @@ const CustomSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 1, ease: CINEMATIC_EASE, delay: 0.6 }}
           >
-            Bali is an endless map of secrets, and the most beautiful corners are often the ones not found in any guidebook. If there is a hidden sanctuary you've dreamt of visiting, a specific light you wish to chase for your lens, or a remote village you've long desired to explore, we will find the way together. My expertise is your canvas, and I am dedicated to unlocking doors to the island's most private and authentic experiences.
+       Bali’s best spots aren’t in guidebooks.
+If you’ve got a hidden temple, quiet village, or perfect light in mind. I’ll help you find it. <br /> <br />
+Your dream trip? Let’s make it real.
           </motion.p>
         </div>
 

@@ -10,10 +10,10 @@ const tenorSans = Tenor_Sans({ subsets: ['latin'], weight: ['400'] })
 
 const GUIDE_STEPS = [
   { id: 0, image: '', location: '', description: '' },
-  { id: 1, image: '/vyan.webp', location: '', description: 'As a local born among the emerald rice fields, I provide more than a tour. I provide a connection to Bali\'s living culture. I am passionate about sharing the delicate balance between our ancestral heritage and the island\'s breathtaking landscapes. You are a welcomed guest invited to experience the quiet magic of my home. Let\'s create an unforgettable journey together.' },
+  { id: 1, image: '/vyan.webp', location: '', description: 'I spend my days in Bali’s quiet villages, hidden temples, secret beaches, and places most tours never reach. This isn’t about ticking off landmarks. It’s about slow walks, real conversations, and moments that stay with you long after you leave. Let’s explore together the way travel should feel: personal, peaceful, and full of meaning.' },
   { id: 2, image: '/testi-1.webp', location: 'Garuda Wisnu Kencana', description: 'Experience the magic of Uluwatu\'s towering cliffs and the mesmerizing Kecak Fire Dance at sunset. I\'ll take you to hidden spots for the best ocean views that most tourists miss.' },
-  { id: 3, image: '/testi-2.webp', location: 'Bali VW Safari Tour', description: 'Explore the cool highlands of Kintamani. Contrast the black lava fields of Mount Batur with the serene beauty of the lake, followed by a local coffee tasting overlooking the volcano.' },
-  { id: 4, image: '/testi-3.webp', location: 'Atlas Beach Club', description: 'Immerse yourself in the vibrant laid-back atmosphere of Canggu. From world-class surf breaks to the trendiest beach clubs and hidden cafes, experience the modern side of Bali\'s coast.' },
+  { id: 3, image: '/testi-2.webp', location: 'Bali VW Safari Tour', description: 'Cruise through misty highlands in a vintage VW, past Mount Batur’s dramatic lava fields and the calm waters of Lake Batur. We’ll stop at a local coffee spot with volcano views  where the air is cool, the brew is strong, and time slows down.' },
+  { id: 4, image: '/testi-3.webp', location: 'Atlas Beach Club', description: 'Surf, sun, and soul. Canggu blends world-class waves with cozy cafes and beach clubs that buzz just enough — without losing their chill.I’ll show you where the locals eat, where the best sunset cocktails pour, and how to find stillness even in the heart of it all.' },
 ]
 
 export default function GuideSection() {

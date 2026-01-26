@@ -62,7 +62,7 @@ export default function HeroHome() {
             </span>
           </h1>
           <p className="hero-paragraph max-w-4xl mx-auto mb-10 text-sm md:text-base text-white/90">
-            Custom tailored private tours with a local friend <br className="hidden md:block" /> who knows every hidden corner of the island.
+          Hi, I’m Vyan. A local guide who shows you hidden temples,<br className="hidden md:block" />  quiet beaches, and real Balinese life. Not just the postcard spots.
           </p>
           <a
             href="https://wa.me/6281234567890?text=Hi%20Vyan,%20I'd%20like%20to%20inquire%20about%20a%20tour."

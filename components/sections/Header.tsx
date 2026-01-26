@@ -115,7 +115,16 @@ const Header = ({ variant = 'default', padding = true }: HeaderProps) => {
             >
 
 
-              <nav className="flex flex-col items-center gap-8 mb-12">
+              <motion.h3 
+                className={`absolute top-28 text-3xl mb-8 text-[#6B6560] ${tenorSans.className}`}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                Vyan Abimanyu
+              </motion.h3>
+
+              <nav className="flex flex-col items-center gap-6 mb-12">
                 {menu.map((item, index) => (
                   <motion.a
                     key={index}
@@ -126,7 +135,7 @@ const Header = ({ variant = 'default', padding = true }: HeaderProps) => {
                     animate={{ opacity: 1 }}
                     transition={{ 
                       duration: 0.5, 
-                      delay: 0.2 + index * 0.1,
+                      delay: 0.3 + index * 0.1,
                       ease: "easeOut"
                     }}
                   >
@@ -142,7 +151,7 @@ const Header = ({ variant = 'default', padding = true }: HeaderProps) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ 
                   duration: 0.6, 
-                  delay: 0.5,
+                  delay: 0.6,
                   ease: [0.25, 0.1, 0.25, 1]
                 }}
               >
@@ -157,18 +166,18 @@ const Header = ({ variant = 'default', padding = true }: HeaderProps) => {
                 </a>
               </motion.div>
 
-              {/* Copyright */}
+              {/* Copyright & Credit */}
               <motion.div 
-                className="absolute bottom-8 text-[#2D2623]/30 text-xs tracking-widest uppercase"
+                className="absolute bottom-8 text-[#2D2623]/50 text-xs tracking-widest uppercase text-center"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ 
                   duration: 0.8, 
-                  delay: 0.6,
+                  delay: 0.7,
                   ease: [0.25, 0.1, 0.25, 1]
                 }}
               >
-                &copy; 2026 Vyan Abimanyu
+                &copy; 2026 Web by <a href="https://flaat.studio" target="_blank" rel="noopener noreferrer" className='font-semibold hover:text-[#2D2623] transition-colors border-b border-transparent hover:border-[#2D2623]'>Flaat Studio</a>
               </motion.div>
             </div>
           </motion.div>

@@ -15,7 +15,10 @@ const Footer = () => {
             <p className="text-[#6B6560]">Bali, Indonesia</p>
           </div>
           <div className="max-w-[400px] text-[#6B6560] leading-relaxed text-center md:text-right">
-            <p>Your local companion for a deeper connection. Dedicated to exploring the soul of Bali through the eyes of a friend, where every curated moment is anchored in safety, authenticity, and heart.</p>
+            <p>I’m here to help you find the quiet moments, real connections, and hidden spots that make Bali unforgettable.
+Every trip I plan is built on safety, authenticity, and a little bit of soul.
+
+</p>
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-center text-gray-500 gap-4 text-center">

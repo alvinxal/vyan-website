@@ -168,7 +168,14 @@ export default function MapSection() {
   useEffect(() => {
     if (isLoading) return
 
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia();
+
+    mm.add({
+      isMobile: "(max-width: 767px)",
+      isDesktop: "(min-width: 768px)",
+    }, (context) => {
+      const { isMobile, isDesktop } = context.conditions as { isMobile: boolean, isDesktop: boolean };
+
       // Map zoom in animation - ROLL FROM BACK TO FRONT (SLOWER)
       gsap.from('.map-image', {
         scale: 0.85,
@@ -183,22 +190,23 @@ export default function MapSection() {
         }
       })
 
-      // Markers stagger animation - SHOW EARLIER
+      // Markers stagger animation - Smoother on mobile
       gsap.from('.map-marker', {
-        scale: 0,
+        scale: isMobile ? 0.5 : 0,
+        y: isMobile ? 10 : 0,
         opacity: 0,
-        duration: 0.6,
-        stagger: 0.08,
-        ease: 'back.out(1.7)',
+        duration: isMobile ? 0.8 : 0.6,
+        stagger: isMobile ? 0.05 : 0.08,
+        ease: isMobile ? 'power2.out' : 'back.out(1.7)',
         scrollTrigger: {
           trigger: mapContainerRef.current,
-          start: 'top 55%', // Earlier trigger - show while map is growing
+          start: isMobile ? 'top 70%' : 'top 55%', // Earlier trigger on mobile
           toggleActions: 'play none none reverse'
         }
       })
     })
 
-    return () => ctx.revert()
+    return () => mm.revert()
   }, [isLoading])
 
 
@@ -365,7 +373,9 @@ export default function MapSection() {
             {/* Paragraph left-aligned */}
             <div className="md:w-2/3">
               <p className="text-[#30373C] text-base md:text-lg leading-[1.8] font-light text-left">
-                I firmly believe that no two travelers are the same, and your journey should be as unique as your own fingerprint. While I provide meticulously curated experiences and insider recommendations, the final itinerary always remains firmly in your hands.
+                No two travelers are the same. And your Bali should be too.
+                I’ll share my favorite spots and quiet corners, but the final plan? That’s yours.
+Because the best moments usually happen when you’re not following a script.
                 <span className="block mt-6 text-[#6B6560] text-sm md:text-base">
                   I understand that the best travel moments often happen in the unplanned gaps.
                 </span>
