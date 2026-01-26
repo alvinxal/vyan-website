@@ -58,12 +58,12 @@ const Header = ({ variant = 'default', padding = true }: HeaderProps) => {
   return (
     <>
       <motion.header 
-        className={`${positionClass} flex justify-between items-center px-6 lg:px-[60px] ${padding ? 'py-10' : 'py-0'}`}
+        className={`${positionClass} flex justify-between items-center px-6 lg:px-[60px] ${padding ? 'py-6' : 'py-0'}`}
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
       >
-        <Link href='/' className={`text-xl md:text-2xl font-normal tracking-wide ${textColor} ${tenorSans.className}`}>
+        <Link href='/' className={`flex items-center text-xl md:text-2xl font-normal tracking-wide ${textColor} ${tenorSans.className} leading-none`}>
           Vyan Abimanyu
         </Link>
         
@@ -84,17 +84,19 @@ const Header = ({ variant = 'default', padding = true }: HeaderProps) => {
         </nav>
 
         {/* Mobile Hamburger Button */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className={`lg:hidden ml-auto flex flex-col justify-center items-end gap-1.5 z-50 p-2 ${variant === 'brown' ? 'text-[#2D2623]' : textColor}`}
-          aria-label="Toggle menu"
-        >
-          <div className="w-6 h-6 relative">
-             <span className={`block absolute h-0.5 w-6 ${variant === 'transparent' ? 'bg-white' : 'bg-[#2D2623]'} transform transition duration-300 ease-in-out ${isMenuOpen ? 'rotate-45 translate-y-0 !bg-[#2D2623]' : '-translate-y-2'}`}></span>
-             <span className={`block absolute h-0.5 w-6 ${variant === 'transparent' ? 'bg-white' : 'bg-[#2D2623]'} transform transition duration-300 ease-in-out ${isMenuOpen ? 'opacity-0' : 'opacity-100'} translate-y-0`}></span>
-             <span className={`block absolute h-0.5 w-6 ${variant === 'transparent' ? 'bg-white' : 'bg-[#2D2623]'} transform transition duration-300 ease-in-out ${isMenuOpen ? '-rotate-45 translate-y-0 !bg-[#2D2623]' : 'translate-y-2'}`}></span>
-          </div>
-        </button>
+        <div className="lg:hidden ml-auto flex items-center">
+            <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className={`flex flex-col justify-center items-center gap-1.5 z-50 ${variant === 'brown' ? 'text-[#2D2623]' : textColor}`}
+            aria-label="Toggle menu"
+            >
+            <div className="w-6 h-6 relative flex flex-col justify-center items-center">
+                <span className={`block absolute h-0.5 w-6 ${variant === 'transparent' ? 'bg-white' : 'bg-[#2D2623]'} transform transition duration-300 ease-in-out ${isMenuOpen ? 'rotate-45 translate-y-0 !bg-[#2D2623]' : '-translate-y-2'}`}></span>
+                <span className={`block absolute h-0.5 w-6 ${variant === 'transparent' ? 'bg-white' : 'bg-[#2D2623]'} transform transition duration-300 ease-in-out ${isMenuOpen ? 'opacity-0' : 'opacity-100'} translate-y-0`}></span>
+                <span className={`block absolute h-0.5 w-6 ${variant === 'transparent' ? 'bg-white' : 'bg-[#2D2623]'} transform transition duration-300 ease-in-out ${isMenuOpen ? '-rotate-45 translate-y-0 !bg-[#2D2623]' : 'translate-y-2'}`}></span>
+            </div>
+            </button>
+        </div>
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
