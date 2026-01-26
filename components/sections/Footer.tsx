@@ -1,17 +1,33 @@
 import Link from "next/link";
 import React from "react";
+import { Tenor_Sans } from 'next/font/google'
+import { Instagram, Facebook, Twitter } from 'lucide-react'
+
+const tenorSans = Tenor_Sans({ subsets: ['latin'], weight: ['400'] })
 
 const Footer = () => {
   return (
-    <div className='w-full text-sm font-medium px-4 md:px-8 py-2 border-gray-800 border-t flex justify-between '>
-      © 2025 Vyan Abimanyu{" "}
-      <span>
-        Website by
-        <span className='ml-1 underline hover:text-blue-800'>
-          <Link href='https://alvinxal.my.id'>Alvin Al</Link>
-        </span>
-      </span>
-    </div>
+    <footer className="py-20 px-6 lg:px-[60px] border-t border-gray-200 bg-white">
+      <div className="max-w-[1400px] mx-auto">
+        <div className="flex flex-col md:flex-row justify-between md:items-start items-center text-center md:text-left mb-16 gap-8">
+          <div>
+            <h3 className={`text-3xl mb-6 text-[#6B6560] ${tenorSans.className}`}>Vyan Abimanyu</h3>
+            <p className="text-[#6B6560]">Bali, Indonesia</p>
+          </div>
+          <div className="max-w-[400px] text-[#6B6560] leading-relaxed text-center md:text-right">
+            <p>Your local companion for a deeper connection. Dedicated to exploring the soul of Bali through the eyes of a friend, where every curated moment is anchored in safety, authenticity, and heart.</p>
+          </div>
+        </div>
+        <div className="flex flex-col md:flex-row justify-between items-center text-gray-500 gap-4 text-center">
+          <p>&copy; 2026 Web by <Link href="https://flaat.studio" target="_blank" rel="noopener noreferrer" className='font-semibold hover:text-[#2D2623] transition-colors'>Flaat Studio</Link></p>
+          <div className="flex gap-6">
+            <Instagram className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
+            <Facebook className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
+            <Twitter className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
+          </div>
+        </div>
+      </div>
+    </footer>
   );
 };
 

@@ -3,6 +3,7 @@ import { Tenor_Sans, Montserrat } from 'next/font/google'
 import Image from 'next/image'
 import Link from 'next/link'
 import Header from '@/components/sections/Header'
+import Footer from '@/components/sections/Footer'
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
@@ -83,7 +84,6 @@ export default function AlternativePage() {
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const mapSectionRef = useRef<HTMLElement>(null)
   const ctaSectionRef = useRef<HTMLElement>(null)
-  const footerRef = useRef<HTMLElement>(null)
   const cursorRef = useRef<HTMLDivElement>(null)
   const [isHoveringMarker, setIsHoveringMarker] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(1)
@@ -552,41 +552,6 @@ export default function AlternativePage() {
     return () => ctx.revert()
   }, [])
 
-
-  // Footer Reveal Animation
-  useEffect(() => {
-    if (isLoading) return
-
-    const ctx = gsap.context(() => {
-      gsap.from('.footer-content', {
-        y: 60,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: 'top bottom',
-          toggleActions: 'play none none none'
-        }
-      })
-
-      // Social icons stagger
-      gsap.from('.social-icon', {
-        scale: 0,
-        opacity: 0,
-        duration: 0.5,
-        stagger: 0.1,
-        ease: 'back.out(1.7)',
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: 'top bottom',
-          toggleActions: 'play none none none'
-        }
-      })
-    })
-
-    return () => ctx.revert()
-  }, [])
 
   // FAQ Section Animation - HEADER FIRST, THEN ITEMS SEQUENTIALLY
   useEffect(() => {
@@ -1091,27 +1056,7 @@ export default function AlternativePage() {
       </section>
 
       {/* Footer */}
-      <footer ref={footerRef} className="py-12 md:py-20 px-6 lg:px-[60px] border-t border-gray-200">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="footer-content flex flex-col items-center gap-8 md:gap-0 mb-12 md:mb-16">
-            <div className="text-center">
-              <h3 className={`text-2xl md:text-3xl mb-6 text-[#6B6560] ${tenorSans.className}`}>Vyan Abimanyu</h3>
-              <p className="text-[#6B6560] text-sm md:text-base">Bali, Indonesia</p>
-            </div>
-            <div className="max-w-[400px] text-[#6B6560] leading-relaxed text-center text-sm md:text-base">
-              <p>Your local companion for a deeper connection. Dedicated to exploring the soul of Bali through eyes of a friend, where every curated moment is anchored in safety, authenticity, and heart.</p>
-            </div>
-          </div>
-          <div className="footer-content flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 text-gray-500">
-             <p className="text-sm">&copy; 2026 Web by <Link href="https://flaat.studio" target="_blank" rel="noopener noreferrer" className='font-semibold hover:text-[#2D2623] transition-colors'>Flaat Studio</Link></p>
-            <div className="flex gap-6">
-              <Instagram className="social-icon w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
-              <Facebook className="social-icon w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
-              <Twitter className="social-icon w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Location Preview Modal */}
       <AnimatePresence>

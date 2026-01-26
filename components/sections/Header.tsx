@@ -22,10 +22,11 @@ const menu = [
 ];
 
 interface HeaderProps {
-  variant?: 'transparent' | 'default';
+  variant?: 'transparent' | 'default' | 'brown';
+  padding?: boolean;
 }
 
-const Header = ({ variant = 'default' }: HeaderProps) => {
+const Header = ({ variant = 'default', padding = true }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Disable scroll when menu is open
@@ -51,13 +52,13 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
     return () => window.removeEventListener('keydown', handleEscape);
   }, []);
 
-  const textColor = variant === 'transparent' ? 'text-white' : 'text-[#2D2623]';
-  const positionClass = variant === 'transparent' ? 'absolute top-0 w-full z-20' : 'relative mb-16 lg:mb-20';
+  const textColor = variant === 'transparent' ? 'text-white' : variant === 'brown' ? 'text-[#2D2623]' : 'text-[#2D2623]';
+  const positionClass = variant === 'transparent' ? 'absolute top-0 w-full z-20' : 'relative';
 
   return (
     <>
       <motion.header 
-        className={`${positionClass} flex justify-between items-center px-6 lg:px-[60px] py-10`}
+        className={`${positionClass} flex justify-between items-center px-6 lg:px-[60px] ${padding ? 'py-10' : 'py-0'}`}
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
@@ -85,7 +86,7 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
         {/* Mobile Hamburger Button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className={`lg:hidden ml-auto flex flex-col justify-center items-end gap-1.5 z-50 p-2 ${textColor}`}
+          className={`lg:hidden ml-auto flex flex-col justify-center items-end gap-1.5 z-50 p-2 ${variant === 'brown' ? 'text-[#2D2623]' : textColor}`}
           aria-label="Toggle menu"
         >
           <div className="w-6 h-6 relative">

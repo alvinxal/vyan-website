@@ -98,7 +98,6 @@ const ContactForm = ({ onSubmit }: { onSubmit: (data: FormData) => Promise<void>
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     if (errors[name as keyof FormData]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -106,45 +105,24 @@ const ContactForm = ({ onSubmit }: { onSubmit: (data: FormData) => Promise<void>
 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof FormData, string>> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-
+    if (!formData.name.trim()) newErrors.name = 'Name is required';
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email';
     }
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
-    }
-
-    if (!formData.date) {
-      newErrors.date = 'Please select a date';
-    }
-
+    if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
+    if (!formData.date) newErrors.date = 'Please select a date';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
+    if (!validateForm()) return;
     setIsSubmitting(true);
     await onSubmit(formData);
-    setFormData({
-      name: '',
-      phone: '',
-      email: '',
-      date: '',
-      groupSize: 'solo'
-    });
+    setFormData({ name: '', phone: '', email: '', date: '', groupSize: 'solo' });
     setErrors({});
     setIsSubmitting(false);
   };
@@ -225,7 +203,7 @@ const ContactForm = ({ onSubmit }: { onSubmit: (data: FormData) => Promise<void>
       <motion.div className="mt-12" variants={itemVariants}>
         <p className={`text-sm font-semibold mb-6 text-[#2D2623] uppercase tracking-wide opacity-80 ${montserrat.className}`}>Group Size</p>
         <div className="flex flex-wrap gap-8 mb-12">
-          {[{l:'Solo Traveller', v:'solo'}, {l:'Private Duo', v:'duo'}, {l:'Small Circle (3-5)', v:'small'}, {l:'Large Group (>5)', v:'large'}].map((opt) => (
+          {[{l:'Solo', v:'solo'}, {l:'Duo', v:'duo'}, {l:'Small Circle (3-5)', v:'small'}, {l:'Large Group (>5)', v:'large'}].map((opt) => (
               <RadioOption
                 key={opt.v}
                 label={opt.l}
@@ -283,16 +261,29 @@ const ContactForm = ({ onSubmit }: { onSubmit: (data: FormData) => Promise<void>
 // Component: Quote Section
 const QuoteSection = () => (
   <motion.section 
-    className="text-center max-w-4xl mx-auto py-20 lg:py-32 px-6"
-    initial={{ opacity: 0, y: 40 }}
-    whileInView={{ opacity: 1, y: 0 }}
+    className="text-center max-w-4xl mx-auto py-48 lg:py-64 px-6"
+    initial={{ opacity: 0 }}
+    whileInView={{ opacity: 1 }}
     viewport={{ once: true }}
-    transition={{ duration: 0.8, delay: 0.2 }}
   >
-    <p className={`text-2xl md:text-3xl lg:text-4xl text-[#6B6560] leading-relaxed mb-6 ${tenorSans.className}`}>
-      "Every inquiry is read with care. I personally look into the tides, the weather, and the hidden corners of the island before responding, ensuring your vision is met with the perfect plan."
-    </p>
-    <p className={`text-sm text-[#2D2623] font-medium tracking-widest uppercase opacity-80 ${montserrat.className}`}>Vyan Abimanyu</p>
+    <motion.p
+      className={`text-2xl md:text-3xl lg:text-4xl text-[#6B6560] leading-relaxed mb-6 ${tenorSans.className}`}
+      initial={{ opacity: 0, y: 80, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1.5, ease: "easeOut" }}
+    >
+      "Every inquiry is read with care. I personally look into to tides, weather, and hidden corners of island before responding, ensuring your vision is met with a perfect plan."
+    </motion.p>
+    <motion.p
+      className={`text-sm text-[#2D2623] font-medium tracking-widest uppercase opacity-80 ${montserrat.className}`}
+      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
+    >
+      Vyan Abimanyu
+    </motion.p>
   </motion.section>
 );
 
@@ -352,14 +343,16 @@ export default function InquiryPage() {
 
   return (
     <div className={`min-h-screen bg-[#F8F5F0] text-[#2D2623] antialiased bg-grain selection:bg-[#2D2623] selection:text-[#F8F5F0]`}>
+      {/* Brown Header - positioned absolutely at top with full width */}
+      <Header variant="brown" />
       
-      <div className="px-6 lg:px-[60px] pb-20 pt-10">
+      {/* Main content with optimized top padding to account for transparent header */}
+      <section className="px-6 lg:px-[60px] pt-8 pb-0 lg:pb-20">
         <div className="max-w-[1400px] mx-auto">
-          <Header variant="default" />
 
-          <main className="flex flex-col lg:flex-row relative justify-between items-start mb-12 gap-12 lg:gap-24">
+          <main className="flex flex-col lg:flex-row relative justify-between items-start mb-16 gap-12 lg:gap-24">
           {/* Left Column: Content */}
-          <div className="w-full lg:flex-1 lg:max-w-[600px] z-10 relative">
+          <div className="w-full lg:flex-1 lg:max-w-[600px] z-10 relative mb-12">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -378,7 +371,7 @@ export default function InquiryPage() {
 
           {/* Right Column: Image */}
           <motion.div 
-            className="relative w-full lg:w-[45vw] lg:h-[800px] h-[500px] rounded-l-lg overflow-hidden shadow-2xl lg:absolute lg:top-0 lg:right-0 lg:-mr-[60px]"
+            className="relative w-full lg:w-[45vw] lg:h-[800px] h-[500px] rounded-l-lg overflow-hidden shadow-2xl lg:absolute lg:top-[6rem] lg:right-0 lg:-mr-[60px]"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
@@ -399,10 +392,10 @@ export default function InquiryPage() {
             <div className="absolute inset-0 bg-[#2D2623]/10 mix-blend-multiply pointer-events-none"></div>
           </motion.div>
         </main>
-
-        <QuoteSection />
         </div>
-      </div>
+      </section>
+
+      <QuoteSection />
 
       {/* Footer */}
       <footer className="py-20 px-6 lg:px-[60px] border-t border-[#2D2623]/10 text-[#6B6560]">
