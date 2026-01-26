@@ -268,7 +268,7 @@ export default function MapSection() {
             {MAP_HOTSPOTS.map((point) => (
               <button
                 key={point.id}
-                className="map-marker absolute w-6 h-6 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center group/pin z-10 hover:z-[60] cursor-none"
+                className="map-marker absolute w-2 h-2 md:w-6 md:h-6 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center group/pin z-10 hover:z-[60] cursor-none"
                 style={{ left: point.x, top: point.y }}
                 aria-label={point.title}
                 onClick={() => {
@@ -297,7 +297,7 @@ export default function MapSection() {
 
                 {/* 3x Size Outer Circle (Magnetic & Beating) - Interactive */}
                 <span 
-                  className="outer-circle absolute w-[20px] h-[20px] bg-white/30 rounded-full animate-pulse transition-opacity duration-300 group-hover/pin:animate-none group-hover/pin:bg-transparent group-hover/pin:border group-hover/pin:border-white z-10 cursor-none"
+                  className="outer-circle absolute w-[8px] h-[8px] md:w-[20px] md:h-[20px] bg-white/30 rounded-full animate-pulse transition-opacity duration-300 group-hover/pin:animate-none group-hover/pin:bg-transparent group-hover/pin:border group-hover/pin:border-white z-10 cursor-none pointer-events-none md:pointer-events-auto"
                   style={{ animationDuration: '4s' }}
                   onMouseMove={(e) => {
                     const btn = e.currentTarget.closest('button');
@@ -389,7 +389,7 @@ Because the best moments usually happen when you’re not following a script.
       <AnimatePresence>
         {isModalOpen && selectedLocation && (
           <motion.div
-          className="fixed inset-0 z-[99] flex items-end justify-center"
+          className="fixed inset-0 z-[1000] flex items-end justify-center"
           onClick={handleCloseModal}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
