@@ -157,7 +157,7 @@ export const TransportSection = () => {
           layout="right-alt"
           scrollProgress={scrollYProgress}
           parallaxSpeeds={{ small: [70, -90], large: [160, -200], bottom: [240, -280], text: [32, -45] }}
-          customGap="gap-16"
+          customGap="gap-8 lg:gap-16"
         />
       </div>
     </section>

@@ -292,6 +292,11 @@ export default function InquiryPage() {
   const [toast, setToast] = useState<ToastState>({ show: false, message: '', type: 'success' });
 
   useEffect(() => {
+    // Disable Lenis on mobile devices (screen width < 768px)
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return
+    }
+
     const lenis = new Lenis()
 
     function raf(time: number) {

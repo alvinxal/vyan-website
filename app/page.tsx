@@ -186,6 +186,11 @@ export default function AlternativePage() {
     // Only initialize Lenis after loading is complete
     if (isLoading) return
 
+    // Disable Lenis on mobile devices (screen width < 768px)
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return
+    }
+
     const lenis = new Lenis()
 
     function raf(time: number) {
