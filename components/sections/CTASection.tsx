@@ -49,7 +49,7 @@ export default function CTASection() {
         <div className="absolute inset-0 bg-black/40 z-0 will-change-transform" />
         <div className="absolute bottom-0 left-0 w-full h-2/3 bg-gradient-to-t from-[#F8F5F0]/30 to-transparent z-0 will-change-transform" />
 
-        <div className="cta-content relative z-10 max-w-4xl mx-auto px-6">
+        <div className="cta-content relative z-10 max-w-4xl mx-auto px-6 lg:px-[60px]">
           <div className="p-4">
             <span className="block mb-6 text-sm md:text-base uppercase tracking-[0.3em] font-medium opacity-90 drop-shadow-md">
               Start Your Journey

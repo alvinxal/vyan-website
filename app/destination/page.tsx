@@ -9,6 +9,7 @@ import Header from '@/components/sections/Header'
 import { TransportSection } from '@/components/sections/destination/TransportSection'
 import Lenis from 'lenis'
 import { Instagram, Facebook, Twitter } from 'lucide-react'
+import Footer from '@/components/sections/Footer'
 
 const tenorSans = Tenor_Sans({ subsets: ['latin'], weight: ['400'] })
 
@@ -310,7 +311,7 @@ const GallerySection = () => {
 
   return (
     <section id="gallery" className="bg-white text-[#333] py-20 px-6 lg:px-[60px] overflow-hidden">
-      <div className="max-w-[1400px] mx-auto">
+      <div className="px-6 lg:px-[60px] mx-auto">
         <div className=" mb-[60px]">
           <motion.h1
             className="font-['Tenor_Sans'] text-[64px] font-normal text-[#2c3e50]"
@@ -344,9 +345,9 @@ const GallerySection = () => {
               viewport={{ once: true }}
               transition={{ duration: 1, ease: CINEMATIC_EASE, delay: 0.4 }}
             >
-              <span className={`text-lg text-[#30373C] ${tenorSans.className} border-b border-[#30373C] pb-0.5`}>
+              <Link href="/inquiry" className="group inline-flex items-center gap-2 bg-transparent border-none cursor-pointer p-0"><span className={`text-lg text-[#30373C] ${tenorSans.className} border-b border-[#30373C] pb-0.5`}>
                 Plan Your Trip
-              </span>
+              </span></Link>
               <span 
                 className={`text-lg text-[#30373C] ${tenorSans.className} pb-0.5 transition-transform duration-300 group-hover:translate-x-1`}
               >
@@ -437,8 +438,8 @@ const CustomSection = () => {
         <main className="flex flex-col items-center relative -mt-5">
           {/* Large Title overlaying image */}
           <motion.h1
-            className="absolute left-1/2 -translate-x-1/2 top-[45%] -translate-y-1/2 lg:left-0 lg:translate-x-0 font-['Tenor_Sans'] text-4xl lg:text-[90px] font-normal tracking-[2px] w-[95%] lg:w-auto lg:w-full z-[2] pointer-events-none text-white text-center leading-tight"
-            style={{ mixBlendMode: 'difference', opacity: textOpacity }}
+         className="absolute left-1/2 -translate-x-1/2 top-[45%] -translate-y-1/2 lg:left-0 lg:translate-x-0 font-['Tenor_Sans'] text-4xl lg:text-[90px] font-normal tracking-[2px] w-[95%] lg:w-auto lg:w-full z-[2] pointer-events-none text-[#f1efea] text-center leading-tight drop-shadow-[0_2px_2px_rgba(0,0,0,0.6)]"
+            style={{  opacity: textOpacity }}
           >
             Somewhere else in mind?
           </motion.h1>
@@ -525,27 +526,7 @@ export default function DestinationPage() {
       <PhilosophySection />
       <CustomSection />
       
-      <footer className="py-20 px-6 lg:px-[60px] border-t border-gray-200 bg-white">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="flex flex-col md:flex-row justify-between md:items-start items-center text-center md:text-left mb-16 gap-8">
-            <div>
-              <h3 className={`text-3xl mb-6 text-[#6B6560] ${tenorSans.className}`}>Vyan Abimanyu</h3>
-              <p className="text-[#6B6560]">Bali, Indonesia</p>
-            </div>
-            <div className="max-w-[400px] text-[#6B6560] leading-relaxed text-center md:text-right">
-              <p>Your local companion for a deeper connection. Dedicated to exploring the soul of Bali through the eyes of a friend, where every curated moment is anchored in safety, authenticity, and heart.</p>
-            </div>
-          </div>
-          <div className="flex flex-col md:flex-row justify-between items-center text-gray-500 gap-4 text-center">
-            <p>&copy; 2026 Web by <Link href="https://flaat.studio" target="_blank" rel="noopener noreferrer" className='font-semibold hover:text-[#2D2623] transition-colors'>Flaat Studio</Link></p>
-            <div className="flex gap-6">
-              <Instagram className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
-              <Facebook className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
-              <Twitter className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
-            </div>
-          </div>
-        </div>
-      </footer>
+      <div className="bg-white"><Footer /></div>
     </div>
   )
 }

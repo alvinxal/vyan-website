@@ -7,8 +7,8 @@ const tenorSans = Tenor_Sans({ subsets: ['latin'], weight: ['400'] })
 
 const Footer = () => {
   return (
-    <footer className="py-20 px-6 lg:px-[60px] border-t border-gray-200 bg-white">
-      <div className="max-w-[1400px] mx-auto">
+    <footer className="py-20 px-6 lg:px-[60px] border-t border-gray-200">
+      <div className=" mx-auto">
         <div className="flex flex-col md:flex-row justify-between md:items-start items-center text-center md:text-left mb-16 gap-8">
           <div>
             <h3 className={`text-3xl mb-6 text-[#6B6560] ${tenorSans.className}`}>Vyan Abimanyu</h3>

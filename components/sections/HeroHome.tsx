@@ -51,8 +51,8 @@ export default function HeroHome() {
   }, [])
 
   return (
-    <section ref={containerRef} className="relative h-screen min-h-[600px] flex items-center justify-center text-center z-0 mb-20 bg-black">
-        <div className="max-w-6xl mx-auto px-6 z-10 text-white">
+    <section ref={containerRef} className="relative h-[100dvh] min-h-[600px] flex items-center justify-center text-center z-0 mb-20 bg-black">
+        <div className=" mx-auto px-6 lg:px-[60px] z-10 text-white">
           <h1 className={`text-4xl md:text-6xl leading-tight mb-6 mx-auto ${tenorSans.className}`}>
             <span className="hero-heading-line-1 block">
               Experience the Soul of Bali,
@@ -83,7 +83,7 @@ export default function HeroHome() {
 
         {/* Location Indicator */}
         <div className="hero-location absolute bottom-12 inset-x-0 z-10">
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-[60px] flex items-center gap-3 text-white/90">
+          <div className=" mx-auto px-6 lg:px-[60px] flex items-center gap-3 text-white/90">
             <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>

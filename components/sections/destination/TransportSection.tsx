@@ -118,7 +118,7 @@ export const TransportSection = () => {
 
   return (
     <section ref={sectionRef} id="transport" className="bg-white text-[#2c3e50] px-6 pt-40 lg:px-[60px] overflow-hidden">
-      <div className="max-w-[1400px] mx-auto">
+      <div className="px-6 lg:px-[60px] mx-auto">
         {/* Section Title */}
         <motion.div 
           className="text-center mb-20"

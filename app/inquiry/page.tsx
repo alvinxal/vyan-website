@@ -7,6 +7,7 @@ import Header from '@/components/sections/Header'
 import Lenis from 'lenis'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Instagram, Phone, Mail, Loader2, Calendar, Facebook, Twitter } from 'lucide-react'
+import Footer from '@/components/sections/Footer'
 
 const tenorSans = Tenor_Sans({ subsets: ['latin'], weight: ['400'] })
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['300', '400', '500', '600'] })
@@ -353,7 +354,7 @@ export default function InquiryPage() {
       
       {/* Main content with optimized top padding to account for transparent header */}
       <section className="px-6 lg:px-[60px] pt-8 pb-0 lg:pb-20">
-        <div className="max-w-[1400px] mx-auto">
+        <div className="mx-auto">
 
           <main className="flex flex-col lg:flex-row relative justify-between items-start mb-16 gap-12 lg:gap-24">
           {/* Left Column: Content */}
@@ -376,7 +377,7 @@ export default function InquiryPage() {
 
           {/* Right Column: Image */}
           <motion.div 
-            className="relative w-full lg:w-[45vw] lg:h-[800px] h-[500px] rounded-l-lg overflow-hidden shadow-2xl lg:absolute lg:top-[6rem] lg:right-0 lg:-mr-[60px]"
+            className="relative w-[calc(100%+3rem)] -ml-6 h-[400px] lg:w-[45vw] h-[800px] lg:rounded-l-lg overflow-hidden lg:absolute lg:right-0 lg:-mr-[60px]"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
@@ -388,8 +389,8 @@ export default function InquiryPage() {
                 className="w-full h-full"
             >
                 <img
-                src="/inquiry-pic.webp"
-                alt="Traditional Balinese Textiles"
+                src="https://images.unsplash.com/photo-1582880421648-a7154a8c99c1?q=80&w=1471&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Nusa Penida Island"
                 className="w-full h-full object-cover object-center"
                 />
             </motion.div>
@@ -403,27 +404,7 @@ export default function InquiryPage() {
       <QuoteSection />
 
       {/* Footer */}
-      <footer className="py-20 px-6 lg:px-[60px] border-t border-[#2D2623]/10 text-[#6B6560]">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start mb-16 gap-8 lg:gap-0 text-center lg:text-left">
-            <div>
-              <h3 className={`text-3xl mb-6 text-[#6B6560] ${tenorSans.className}`}>Vyan Abimanyu</h3>
-              <p className="text-[#6B6560]">Bali, Indonesia</p>
-            </div>
-            <div className="max-w-[400px] text-[#6B6560] leading-relaxed lg:text-right">
-              <p>Your local companion for a deeper connection. Dedicated to exploring the soul of Bali through the eyes of a friend, where every curated moment is anchored in safety, authenticity, and heart.</p>
-            </div>
-          </div>
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-6 lg:gap-0 text-gray-500">
-             <p className="text-center lg:text-left">&copy; 2026 Web by <Link href="https://flaat.studio" target="_blank" rel="noopener noreferrer" className='font-semibold hover:text-[#2D2623] transition-colors'>Flaat Studio</Link></p>
-            <div className="flex gap-6">
-              <Instagram className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
-              <Facebook className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
-              <Twitter className="w-5 h-5 cursor-pointer hover:text-[#2D2623] transition-colors" strokeWidth={1.5} />
-            </div>
-          </div>
-        </div>
-      </footer>
+      <div className="bg-[#f7f3ee]"><Footer/></div>
 
       <Toast
         isVisible={toast.show}

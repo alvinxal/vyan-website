@@ -15,8 +15,8 @@ const MAP_HOTSPOTS = [
   { id: 1, x: '50%', y: '22.4%', title: 'Banyumala Waterfall', description: 'A stunning twin waterfall featuring crystal-clear natural pools perfect for a refreshing swim in the jungle.', image: '/banyumala.webp' },
   { id: 2, x: '76.7%', y: '12.5%', title: 'Savana Tianyar', description: 'A vast, golden grassland at the foot of Mount Agung that offers a unique African-safari aesthetic in Bali.', image: '/tianyar.webp' },
   { id: 3, x: '69.5%', y: '41%', title: 'Tegallalang Rice Terrace', description: 'An iconic valley of lush green rice paddies utilizing the traditional Balinese Subak irrigation system.', image: "/tegallalang.webp" },
-  { id: 4, x: '68.8%', y: '79.5%', title: 'Tegal Wangi Beach', description: 'A scenic coastal escape famous for its natural rock pools that serve as private oceanfront jacuzzis.', image: '/tegalwangi.png' },
-  { id: 5, x: '66.5%', y: '94%', title: 'Uluwatu Temple', description: 'A majestic sea temple perched on a steep cliff edge, renowned for its sunset views and traditional Kecak fire dances.', image: '/tanah-lot.png' },
+  { id: 4, x: '68.8%', y: '79.5%', title: 'Tegal Wangi Beach', description: 'A scenic coastal escape famous for its natural rock pools that serve as private oceanfront jacuzzis.', image: '/tegalwangi.webp' },
+  { id: 5, x: '66.5%', y: '94%', title: 'Uluwatu Temple', description: 'A majestic sea temple perched on a steep cliff edge, renowned for its sunset views and traditional Kecak fire dances.', image: 'https://images.unsplash.com/photo-1588625224664-a561c1f5f619?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
   { id: 6, x: '70.7%', y: '89.3%', title: 'Garuda Wisnu Kencana', description: 'A sprawling cultural park home to one of the world\'s tallest monumental statues of the Hindu god Vishnu.', image: '/gwk.webp' },
   { id: 7, x: '93%', y: '72.5%', title: 'Nusa Penida', description: 'An offshore island paradise known for its dramatic limestone cliffs and world-class snorkeling spots like Manta Point.', image: '/nusa-penida.webp' },
   { id: 8, x: '5%', y: '26%', title: 'West Bali National Park', description: 'A protected sanctuary of monsoon forests and mangroves that serves as the last refuge for the rare Bali Starling.', image: '/west-national.webp' },
@@ -159,6 +159,20 @@ export default function MapSection() {
           toggleActions: 'play none none reverse'
         }
       })
+
+      // Animate instructions (Desktop & Mobile)
+      gsap.to(['.map-instruction-desktop', '.map-instruction-mobile'], {
+        y: 0,
+        opacity: 0.6, // Target opacity (matches original design)
+        duration: 1,
+        delay: 0.3, // Delay slightly after title
+        ease: 'power3.out',
+        scrollTrigger: {
+            trigger: mapSectionRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+        }
+      })
     })
 
     return () => ctx.revert()
@@ -213,14 +227,14 @@ export default function MapSection() {
   return (
     <>
       <section ref={mapSectionRef} className="py-20 md:py-28 mb-20">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-[60px] relative">
+        <div className="mx-auto px-6 lg:px-[60px] relative">
           <div className="mb-12 flex flex-col md:flex-row md:justify-between md:items-start gap-4 md:gap-0">
             <h2 className={`tours-title text-4xl md:text-[64px] leading-tight max-w-[400px] text-[#30373C] ${tenorSans.className} opacity-0`}>
               Explore Our Tour
             </h2>
 
             {/* Instruction Text - Top Right */}
-            <div className="flex items-center gap-3 opacity-40 mt-4 hidden md:flex">
+            <div className="map-instruction-desktop flex items-center gap-3 opacity-0 mt-4 hidden md:flex translate-y-4">
               <span className="text-[10px] uppercase tracking-[0.2em] text-[#30373C] font-bold text-right">
                 Hover or click on a marker <br/>to explore each stop
               </span>
@@ -228,7 +242,7 @@ export default function MapSection() {
             </div>
 
             {/* Mobile Instruction Text */}
-            <div className="flex items-center gap-3 opacity-60 md:hidden">
+            <div className="map-instruction-mobile flex items-center gap-3 opacity-0 translate-y-4 md:hidden">
               <span className="text-xs uppercase tracking-[0.15em] text-[#30373C] font-bold">
                 Tap markers to explore
               </span>
@@ -243,7 +257,7 @@ export default function MapSection() {
             {/* Custom Search/Marker Cursor */}
             <div 
               ref={cursorRef}
-              className={`absolute w-10 h-10 pointer-events-none z-[100] flex items-center justify-center transition-opacity duration-300 -translate-x-1/2 -translate-y-1/2 ${
+              className={`absolute w-10 h-10 pointer-events-none z-[100] hidden md:flex items-center justify-center transition-opacity duration-300 -translate-x-1/2 -translate-y-1/2 ${
                 isHoveringMarker 
                   ? 'opacity-0' 
                   : 'opacity-0 group-hover:opacity-100'
@@ -297,7 +311,7 @@ export default function MapSection() {
 
                 {/* 3x Size Outer Circle (Magnetic & Beating) - Interactive */}
                 <span 
-                  className="outer-circle absolute w-[8px] h-[8px] md:w-[20px] md:h-[20px] bg-white/30 rounded-full animate-pulse transition-opacity duration-300 group-hover/pin:animate-none group-hover/pin:bg-transparent group-hover/pin:border group-hover/pin:border-white z-10 cursor-none pointer-events-none md:pointer-events-auto"
+                  className="outer-circle absolute w-[8px] h-[8px] md:w-[20px] md:h-[20px] bg-white/30 rounded-full md:animate-pulse transition-opacity duration-300 group-hover/pin:animate-none group-hover/pin:bg-transparent group-hover/pin:border group-hover/pin:border-white z-10 cursor-none pointer-events-none md:pointer-events-auto"
                   style={{ animationDuration: '4s' }}
                   onMouseMove={(e) => {
                     const btn = e.currentTarget.closest('button');
@@ -331,8 +345,8 @@ export default function MapSection() {
                   }}
                 ></span>
                 
-                {/* Core Circle Glow (Ping) */}
-                <span className="absolute inset-x-0 inset-y-0 rounded-full bg-white animate-ping opacity-20 group-hover/pin:opacity-0"></span>
+                {/* Core Circle Glow (Ping) - Desktop Only */}
+                <span className="absolute inset-x-0 inset-y-0 rounded-full bg-white md:animate-ping opacity-20 group-hover/pin:opacity-0 hidden md:block"></span>
                 
                 {/* Tooltip */}
                 <div className="map-tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-6 p-3 bg-white/[0.85] backdrop-blur-md text-[#30373C] rounded-md shadow-2xl opacity-0 invisible group-hover/pin:opacity-100 group-hover/pin:visible transition-opacity duration-300 pointer-events-none z-[50] w-[250px] text-left border border-white/20">

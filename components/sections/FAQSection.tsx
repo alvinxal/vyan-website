@@ -89,7 +89,7 @@ export default function FAQSection() {
 
   return (
       <section className="faq-section py-20 md:py-32 bg-white relative z-20">
-        <div className="max-w-[800px] mx-auto px-6">
+        <div className="max-w-[800px] mx-auto px-6 lg:px-[60px]">
           <div className="mb-12 md:mb-20 text-center">
             <span className="faq-subtitle block mb-4 text-[#6B6560] text-sm uppercase tracking-widest font-medium">Common Questions</span>
             <h2 className={`faq-title text-4xl md:text-6xl leading-tight text-[#30373C] ${tenorSans.className}`}>

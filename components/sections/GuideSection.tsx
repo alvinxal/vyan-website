@@ -241,7 +241,7 @@ export default function GuideSection() {
         {/* Desktop: GSAP Horizontal Scroll Animation */}
         <div className="hidden md:block">
           {/* Text Content within centered container */}
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-[60px] relative z-20 w-full">
+          <div className=" mx-auto px-6 lg:px-[60px] relative z-20 w-full">
             <div className="flex-shrink-0">
               <div className="mb-12 flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-0">
                 <div>

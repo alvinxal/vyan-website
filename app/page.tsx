@@ -2,16 +2,18 @@
 import { Montserrat } from 'next/font/google'
 import Header from '@/components/sections/Header'
 import Footer from '@/components/sections/Footer'
+import dynamic from 'next/dynamic'
 import { useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import { useLoading } from '@/lib/loading-context'
 import HeroHome from '@/components/sections/HeroHome'
-import GuideSection from '@/components/sections/GuideSection'
-import MapSection from '@/components/sections/MapSection'
-import FAQSection from '@/components/sections/FAQSection'
-import CTASection from '@/components/sections/CTASection'
+
+const GuideSection = dynamic(() => import('@/components/sections/GuideSection'))
+const MapSection = dynamic(() => import('@/components/sections/MapSection'))
+const FAQSection = dynamic(() => import('@/components/sections/FAQSection'))
+const CTASection = dynamic(() => import('@/components/sections/CTASection'))
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['300', '400', '500', '600'] })
 
