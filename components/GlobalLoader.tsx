@@ -32,10 +32,10 @@ export default function GlobalLoader() {
       setProgress(percentage)
 
       if (loadedCount === totalAssets) {
-        // All assets loaded, wait a bit then hide loader
+        // All critical assets loaded, hide loader quickly
         setTimeout(() => {
           setIsLoading(false)
-        }, 800)
+        }, 500) // Reduced from 800ms
       }
     }
 
@@ -73,7 +73,7 @@ export default function GlobalLoader() {
       })
     })
 
-    // Start loading all assets
+    // Start loading all critical assets
     Promise.all([...imagePromises, ...videoPromises])
 
   }, [])

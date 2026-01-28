@@ -8,6 +8,7 @@ import Lenis from 'lenis'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Instagram, Phone, Mail, Loader2, Calendar, Facebook, Twitter } from 'lucide-react'
 import Footer from '@/components/sections/Footer'
+import { preloadAssets, INQUIRY_ASSETS } from '@/lib/assets'
 
 const tenorSans = Tenor_Sans({ subsets: ['latin'], weight: ['400'] })
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['300', '400', '500', '600'] })
@@ -293,6 +294,11 @@ export default function InquiryPage() {
   const [toast, setToast] = useState<ToastState>({ show: false, message: '', type: 'success' });
 
   useEffect(() => {
+    // Lazy load inquiry page assets
+    preloadAssets(INQUIRY_ASSETS).catch(() => {
+      // Silently fail - non-critical assets
+    })
+
     // Disable Lenis on mobile devices (screen width < 768px)
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
       return

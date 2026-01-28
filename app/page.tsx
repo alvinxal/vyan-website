@@ -9,6 +9,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import { useLoading } from '@/lib/loading-context'
 import HeroHome from '@/components/sections/HeroHome'
+import { preloadAssets, HOMEPAGE_ASSETS } from '@/lib/assets'
 
 const GuideSection = dynamic(() => import('@/components/sections/GuideSection'))
 const MapSection = dynamic(() => import('@/components/sections/MapSection'))
@@ -23,6 +24,16 @@ if (typeof window !== 'undefined') {
 
 export default function AlternativePage() {
   const { isLoading } = useLoading()
+
+  // Lazy load homepage assets after critical assets are loaded
+  useEffect(() => {
+    if (!isLoading) {
+      // Preload below-the-fold assets in the background
+      preloadAssets(HOMEPAGE_ASSETS).catch(() => {
+        // Silently fail - these are non-critical assets
+      })
+    }
+  }, [isLoading])
 
   // Lenis Smooth Scroll
   useEffect(() => {

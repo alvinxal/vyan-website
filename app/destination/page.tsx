@@ -10,6 +10,7 @@ import { TransportSection } from '@/components/sections/destination/TransportSec
 import Lenis from 'lenis'
 import { Instagram, Facebook, Twitter } from 'lucide-react'
 import Footer from '@/components/sections/Footer'
+import { preloadAssets, DESTINATION_ASSETS } from '@/lib/assets'
 
 const tenorSans = Tenor_Sans({ subsets: ['latin'], weight: ['400'] })
 
@@ -495,6 +496,11 @@ Your dream trip? Let’s make it real.
 // Main Page Component
 export default function DestinationPage() {
   useEffect(() => {
+    // Lazy load destination page assets
+    preloadAssets(DESTINATION_ASSETS).catch(() => {
+      // Silently fail - non-critical assets
+    })
+
     // Disable Lenis on mobile devices (screen width < 768px)
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
       return

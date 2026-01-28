@@ -442,7 +442,7 @@ Because the best moments usually happen when you’re not following a script.
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-transparent/50 to-transparent" />
 
               {/* Content Container */}
-              <div className="absolute inset-x-0 bottom-0 max-w-[1400px] mx-auto px-6 lg:px-[60px] pb-8 md:pb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-8">
+              <div className="absolute inset-x-0 bottom-0 mx-auto px-6 lg:px-[60px] pb-8 md:pb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-8">
                 {/* Title - Bottom Left */}
                 <motion.div
                   className="flex-shrink-0 w-full md:w-[600px]"
@@ -457,7 +457,7 @@ Because the best moments usually happen when you’re not following a script.
 
                 {/* Description - Bottom Right */}
                 <motion.div
-                  className="max-w-full md:max-w-[300px] text-left md:text-right"
+                  className="max-w-full md:max-w-[600px] text-left md:text-right"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.5 }}
